@@ -421,6 +421,35 @@ class VocabMasterApp {
             </div>
         `).join('');
     }
+
+    async addWord(english, arabic) {
+        try {
+            const docRef = await firebase.addDoc(firebase.collection(firebase.db, 'words'), {
+                english,
+                arabic,
+                dateAdded: new Date().toISOString()
+            });
+            
+            this.words.push({ id: docRef.id, english, arabic });
+            this.calculateStats();
+            this.renderCurrentPage();
+            this.showToast('Vocabulary word added successfully to your collection.', 'success');
+        } catch (error) {
+            this.showToast('Unable to add word. Please try again.', 'error');
+        }
+    }
+
+    async deleteWord(wordId) {
+        try {
+            await firebase.deleteDoc(firebase.doc(firebase.db, 'words', wordId));
+            this.words = this.words.filter(word => word.id !== wordId);
+            this.calculateStats();
+            this.renderCurrentPage();
+            this.showToast('Vocabulary word removed successfully.', 'success');
+        } catch (error) {
+            this.showToast('Unable to delete word. Please try again.', 'error');
+        }
+    }
 }
 
 // Initialize the app when DOM is loaded

@@ -416,7 +416,7 @@ class VocabMasterApp {
     renderSearch() {
         return `
             <div class="max-w-4xl mx-auto">
-                <h2 class="text-2xl font-semibold text-slate-800 mb-8">Search Vocabulary</h2>
+                <h2 class="text-2xl font-semibold text-slate-800 mb-8">${this.t('search')} ${this.t('vocabulary')}</h2>
                 <div class="relative mb-8">
                     <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
                     <input type="text" id="searchInput" placeholder="Search words or translations..." class="w-full pl-12 pr-4 py-4 text-lg border border-slate-300 rounded-lg bg-white transition-all duration-200 focus:outline-none focus:border-blue-500 focus:ring-3 focus:ring-blue-100">

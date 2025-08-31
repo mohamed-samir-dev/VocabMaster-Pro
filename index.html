@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -93,46 +93,46 @@
             <div class="p-4 md:p-6 border-b border-slate-200">
                 <div class="flex items-center gap-2 md:gap-3 text-lg md:text-xl font-bold text-blue-600">
                     <i class="fas fa-graduation-cap text-xl md:text-2xl"></i>
-                    <span id="appTitle" class="truncate">VocabMaster Pro</span>
+                    <span id="appTitle" class="truncate">ماستر المفردات برو</span>
                 </div>
             </div>
             <ul class="py-4">
                 <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600 bg-blue-50 text-blue-600 border-r-2 border-blue-600" data-page="dashboard">
                     <i class="fas fa-chart-line w-5 text-center"></i>
-                    <span>Dashboard</span>
+                    <span>لوحة التحكم</span>
                 </li>
                 <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600" data-page="vocabulary">
                     <i class="fas fa-book w-5 text-center"></i>
-                    <span>Vocabulary</span>
+                    <span>المفردات</span>
                 </li>
                 <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600" data-page="test">
                     <i class="fas fa-brain w-5 text-center"></i>
-                    <span>Test</span>
+                    <span>الاختبار</span>
                 </li>
                 <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600" data-page="search">
                     <i class="fas fa-search w-5 text-center"></i>
-                    <span>Search</span>
+                    <span>البحث</span>
                 </li>
             </ul>
         </nav>
 
         <!-- Main Content -->
-        <main class="flex-1 md:ml-72 flex flex-col" id="mainContent">
+        <main class="flex-1 md:mr-72 flex flex-col" id="mainContent">
             <header class="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center shadow-sm sticky top-0 z-40">
                 <div class="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
                     <button class="sidebar-toggle md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg text-xl flex-shrink-0">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h1 class="page-title text-lg md:text-2xl font-semibold text-slate-800 truncate">Dashboard</h1>
+                    <h1 class="page-title text-lg md:text-2xl font-semibold text-slate-800 truncate">لوحة التحكم</h1>
                 </div>
                 <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
                     <button class="inline-flex items-center gap-1 md:gap-2 px-2 md:px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs md:text-sm font-medium hover:bg-slate-200 transition-all duration-200" onclick="app.toggleLanguage()" id="langToggle">
                         <i class="fas fa-language"></i>
-                        <span id="langText" class="hidden sm:inline">العربية</span>
+                        <span id="langText" class="hidden sm:inline">English</span>
                     </button>
                     <button class="inline-flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 md:py-3 bg-blue-600 text-white rounded-lg text-xs md:text-sm font-medium hover:bg-blue-700 transition-all duration-200" onclick="app.navigateTo('search')">
                         <i class="fas fa-search"></i>
-                        <span id="searchBtnText" class="hidden sm:inline">Search</span>
+                        <span id="searchBtnText" class="hidden sm:inline">البحث</span>
                     </button>
                 </div>
             </header>
@@ -156,14 +156,14 @@
                 <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-graduation-cap text-2xl"></i>
                 </div>
-                <h2 class="text-2xl font-bold mb-2" id="welcomeModalTitle">Welcome to VocabMaster Pro</h2>
-                <p class="text-blue-100" id="welcomeSubtitle">Your journey to English mastery begins here</p>
+                <h2 class="text-2xl font-bold mb-2" id="welcomeModalTitle">مرحباً بك في ماستر المفردات برو</h2>
+                <p class="text-blue-100" id="welcomeSubtitle">رحلتك لإتقان الإنجليزية تبدأ هنا</p>
             </div>
             <div class="p-6">
                 <div class="text-center mb-6">
                     <div class="text-4xl mb-3" id="welcomeIcon">📚</div>
-                    <h3 class="text-lg font-semibold text-slate-800 mb-2" id="welcomeTitle">Smart Vocabulary Learning</h3>
-                    <p class="text-slate-600 text-sm" id="welcomeDescription">Build your English vocabulary with our intelligent learning system</p>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2" id="welcomeTitle">تعلم المفردات الذكي</h3>
+                    <p class="text-slate-600 text-sm" id="welcomeDescription">ابني مفرداتك الإنجليزية مع نظام التعلم الذكي</p>
                 </div>
                 <div class="space-y-3 mb-6">
                     <div class="flex items-center gap-3 text-sm text-slate-600">
@@ -180,7 +180,7 @@
                     </div>
                 </div>
                 <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200" onclick="app.closeWelcomeModal()" id="getStartedBtn">
-                    Get Started
+                    ابدأ الآن
                 </button>
             </div>
         </div>

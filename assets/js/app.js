@@ -9,7 +9,7 @@ class VocabMasterApp {
             accuracy: 0,
             streak: 0
         };
-        this.currentLang = 'en';
+        this.currentLang = 'ar';
         this.welcomeContent = {
             en: [
                 {
@@ -213,12 +213,23 @@ class VocabMasterApp {
     }
 
     async init() {
+        this.setInitialLanguage();
         this.setupEventListeners();
         this.showLoading();
         await this.loadData();
         this.renderCurrentPage();
         this.hideLoading();
         this.checkFirstVisit();
+    }
+
+    setInitialLanguage() {
+        document.documentElement.lang = 'ar';
+        document.documentElement.dir = 'rtl';
+        document.getElementById('langText').textContent = 'English';
+        const mainContent = document.getElementById('mainContent');
+        mainContent.classList.remove('md:ml-72');
+        mainContent.classList.add('md:mr-72');
+        this.updateNavigation();
     }
 
     setupEventListeners() {

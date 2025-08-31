@@ -68,7 +68,17 @@ class VocabMasterApp {
                 intermediate: 'Intermediate',
                 advanced: 'Advanced',
                 expert: 'Expert',
-                appTitle: 'VocabMaster Pro'
+                appTitle: 'VocabMaster Pro',
+                learningInsights: 'Learning Insights',
+                dailyChallenge: 'Daily Challenge',
+                wordOfTheDay: 'Word of the Day',
+                studyRecommendation: 'Study Recommendation',
+                motivationalQuote: 'Stay Consistent!',
+                quoteText: 'Success is the sum of small efforts repeated day in and day out.',
+                challengeText: 'Learn 5 new words today',
+                recommendationText: 'Focus on words you haven\'t tested yet',
+                viewChallenge: 'Start Challenge',
+                learnMore: 'Learn More'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -127,7 +137,17 @@ class VocabMasterApp {
                 intermediate: 'متوسط',
                 advanced: 'متقدم',
                 expert: 'خبير',
-                appTitle: 'ماستر المفردات برو'
+                appTitle: 'ماستر المفردات برو',
+                learningInsights: 'رؤى التعلم',
+                dailyChallenge: 'تحدي يومي',
+                wordOfTheDay: 'كلمة اليوم',
+                studyRecommendation: 'توصية الدراسة',
+                motivationalQuote: 'استمر في التعلم!',
+                quoteText: 'النجاح هو مجموع الجهود الصغيرة المتكررة يومياً.',
+                challengeText: 'تعلم 5 كلمات جديدة اليوم',
+                recommendationText: 'ركز على الكلمات التي لم تختبرها بعد',
+                viewChallenge: 'بدء التحدي',
+                learnMore: 'تعلم المزيد'
             }
         };
         this.init();
@@ -345,6 +365,18 @@ class VocabMasterApp {
         ).length;
         return Math.round((testedWords / this.words.length) * 100);
     }
+    
+    getWordOfTheDay() {
+        if (this.words.length === 0) {
+            return { english: 'Welcome', arabic: 'أهلاً وسهلاً' };
+        }
+        
+        // Use date as seed for consistent daily word
+        const today = new Date().toDateString();
+        const seed = today.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+        const index = seed % this.words.length;
+        return this.words[index];
+    }
 
     showToast(message, type = 'success') {
         const toast = document.createElement('div');
@@ -531,6 +563,66 @@ class VocabMasterApp {
                     <div class="text-center">
                         <div class="text-2xl font-bold text-slate-800 mb-1">${this.stats.weeklyGoal}%</div>
                         <div class="text-sm text-slate-500">${this.t('goalProgress')}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Learning Insights Section -->
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold text-slate-800 mb-6">${this.t('learningInsights')}</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Daily Challenge Card -->
+                    <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-white bg-opacity-10 rounded-full -mr-10 -mt-10"></div>
+                        <div class="relative z-10">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-trophy text-yellow-300"></i>
+                                </div>
+                                <h3 class="font-semibold">${this.t('dailyChallenge')}</h3>
+                            </div>
+                            <p class="text-white text-opacity-90 mb-4">${this.t('challengeText')}</p>
+                            <button class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200" onclick="app.navigateTo('test')">
+                                ${this.t('viewChallenge')}
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Word of the Day Card -->
+                    <div class="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl p-6 text-white relative overflow-hidden">
+                        <div class="absolute bottom-0 left-0 w-16 h-16 bg-white bg-opacity-10 rounded-full -ml-8 -mb-8"></div>
+                        <div class="relative z-10">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-lightbulb text-yellow-300"></i>
+                                </div>
+                                <h3 class="font-semibold">${this.t('wordOfTheDay')}</h3>
+                            </div>
+                            <div class="mb-4">
+                                <p class="text-2xl font-bold mb-1">${this.getWordOfTheDay().english}</p>
+                                <p class="text-white text-opacity-90">${this.getWordOfTheDay().arabic}</p>
+                            </div>
+                            <button class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200" onclick="app.navigateTo('vocabulary')">
+                                ${this.t('learnMore')}
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Motivational Quote Card -->
+                    <div class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-6 text-white relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-24 h-24 bg-white bg-opacity-5 rounded-full -ml-12 -mt-12"></div>
+                        <div class="relative z-10">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-quote-left text-yellow-300"></i>
+                                </div>
+                                <h3 class="font-semibold">${this.t('motivationalQuote')}</h3>
+                            </div>
+                            <p class="text-white text-opacity-90 text-sm italic mb-4">"${this.t('quoteText')}"</p>
+                            <div class="text-xs text-white text-opacity-70">
+                                ${this.t('studyRecommendation')}: ${this.t('recommendationText')}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

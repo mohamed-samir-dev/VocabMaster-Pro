@@ -43,7 +43,19 @@ class VocabMasterApp {
                 searchPlaceholder: 'Search words or translations...',
                 noWordsForSearch: 'No vocabulary available for search. Please add words to your collection first.',
                 startTyping: 'Start typing to search your vocabulary',
-                noMatches: 'No matching vocabulary found. Try different search terms.'
+                noMatches: 'No matching vocabulary found. Try different search terms.',
+                testComplete: 'Test Complete!',
+                yourScore: 'Your Score',
+                correctAnswers: 'Correct Answers',
+                totalQuestions: 'Total Questions',
+                timeSpent: 'Time Spent',
+                performance: 'Performance',
+                excellent: 'Excellent',
+                good: 'Good',
+                fair: 'Fair',
+                needsImprovement: 'Needs Improvement',
+                retakeTest: 'Retake Test',
+                backToDashboard: 'Back to Dashboard'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -77,7 +89,19 @@ class VocabMasterApp {
                 searchPlaceholder: 'البحث في الكلمات أو الترجمات...',
                 noWordsForSearch: 'لا توجد مفردات متاحة للبحث. يرجى إضافة كلمات إلى مجموعتك أولاً.',
                 startTyping: 'ابدأ الكتابة للبحث في مفرداتك',
-                noMatches: 'لم يتم العثور على مفردات مطابقة. جرب مصطلحات بحث مختلفة.'
+                noMatches: 'لم يتم العثور على مفردات مطابقة. جرب مصطلحات بحث مختلفة.',
+                testComplete: 'اكتمل الاختبار!',
+                yourScore: 'نتيجتك',
+                correctAnswers: 'الإجابات الصحيحة',
+                totalQuestions: 'إجمالي الأسئلة',
+                timeSpent: 'الوقت المستغرق',
+                performance: 'الأداء',
+                excellent: 'ممتاز',
+                good: 'جيد',
+                fair: 'مقبول',
+                needsImprovement: 'يحتاج تحسين',
+                retakeTest: 'إعادة الاختبار',
+                backToDashboard: 'العودة للوحة التحكم'
             }
         };
         this.init();
@@ -702,10 +726,73 @@ class VocabMasterApp {
     }
 
     showTestResults(correct, total, percentage) {
-        const performanceLevel = percentage >= 90 ? 'Excellent' : percentage >= 70 ? 'Good' : percentage >= 50 ? 'Fair' : 'Needs Improvement';
+        const timeSpent = Math.round((new Date() - this.currentTest.startTime) / 1000);
+        const minutes = Math.floor(timeSpent / 60);
+        const seconds = timeSpent % 60;
+        const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
         
-        this.showToast(`Test completed! Score: ${correct}/${total} (${percentage}%) - ${performanceLevel}`, 'success');
-        this.navigateTo('dashboard');
+        let performanceKey, performanceColor, performanceIcon;
+        if (percentage >= 90) {
+            performanceKey = 'excellent';
+            performanceColor = 'text-green-600 bg-green-50';
+            performanceIcon = 'fa-trophy';
+        } else if (percentage >= 70) {
+            performanceKey = 'good';
+            performanceColor = 'text-blue-600 bg-blue-50';
+            performanceIcon = 'fa-thumbs-up';
+        } else if (percentage >= 50) {
+            performanceKey = 'fair';
+            performanceColor = 'text-yellow-600 bg-yellow-50';
+            performanceIcon = 'fa-star-half-alt';
+        } else {
+            performanceKey = 'needsImprovement';
+            performanceColor = 'text-red-600 bg-red-50';
+            performanceIcon = 'fa-chart-line';
+        }
+        
+        const pageContent = document.getElementById('pageContent');
+        pageContent.innerHTML = `
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-white rounded-xl shadow-lg border border-slate-200 p-8 text-center">
+                    <div class="w-20 h-20 mx-auto mb-6 ${performanceColor} rounded-full flex items-center justify-center">
+                        <i class="fas ${performanceIcon} text-3xl"></i>
+                    </div>
+                    
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">${this.t('testComplete')}</h2>
+                    <p class="text-lg ${performanceColor.split(' ')[0]} font-semibold mb-8">${this.t(performanceKey)}</p>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-slate-800 mb-1">${percentage}%</div>
+                            <div class="text-sm text-slate-600">${this.t('yourScore')}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-600 mb-1">${correct}</div>
+                            <div class="text-sm text-slate-600">${this.t('correctAnswers')}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-slate-800 mb-1">${total}</div>
+                            <div class="text-sm text-slate-600">${this.t('totalQuestions')}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-600 mb-1">${timeString}</div>
+                            <div class="text-sm text-slate-600">${this.t('timeSpent')}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4 justify-center">
+                        <button onclick="app.startTest()" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                            <i class="fas fa-redo mr-2"></i>
+                            ${this.t('retakeTest')}
+                        </button>
+                        <button onclick="app.navigateTo('dashboard')" class="px-6 py-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-medium">
+                            <i class="fas fa-home mr-2"></i>
+                            ${this.t('backToDashboard')}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 }
 

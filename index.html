@@ -21,6 +21,12 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         .sidebar-slide { transform: translateX(-100%); }
         .sidebar-slide.open { transform: translateX(0); }
+        [dir="rtl"] .sidebar-slide { transform: translateX(100%); right: 0; left: auto; border-right: 1px solid #e2e8f0; border-left: none; }
+        [dir="rtl"] .sidebar-slide.open { transform: translateX(0); }
+        [dir="rtl"] .nav-item.active { border-right: none; border-left: 2px solid #2563eb; }
+        @media (min-width: 768px) {
+            [dir="rtl"] .sidebar-slide { transform: translateX(0); }
+        }
     </style>
 </head>
 <body class="font-inter bg-slate-50 text-slate-800">

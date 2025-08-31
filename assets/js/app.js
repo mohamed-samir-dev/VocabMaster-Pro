@@ -10,6 +10,20 @@ class VocabMasterApp {
             streak: 0
         };
         this.currentLang = 'en';
+        this.translations = {
+            en: {
+                dashboard: 'Dashboard',
+                vocabulary: 'Vocabulary',
+                test: 'Test',
+                search: 'Search'
+            },
+            ar: {
+                dashboard: 'لوحة التحكم',
+                vocabulary: 'المفردات',
+                test: 'الاختبار',
+                search: 'البحث'
+            }
+        };
         this.init();
     }
 

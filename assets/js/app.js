@@ -30,7 +30,20 @@ class VocabMasterApp {
                 deleteConfirm: 'Are you sure you want to delete:',
                 startTest: 'Start Test',
                 submit: 'Submit',
-                skip: 'Skip'
+                skip: 'Skip',
+                assessmentReady: 'Assessment Ready',
+                evaluateMastery: 'Evaluate your mastery of',
+                word: 'word',
+                words: 'words',
+                question: 'Question',
+                of: 'of',
+                enterTranslation: 'Enter your translation...',
+                addWordsFirst: 'Please add vocabulary words to your collection before taking a test.',
+                emptyCollection: 'Your vocabulary collection is empty. Start building your knowledge by adding your first word!',
+                searchPlaceholder: 'Search words or translations...',
+                noWordsForSearch: 'No vocabulary available for search. Please add words to your collection first.',
+                startTyping: 'Start typing to search your vocabulary',
+                noMatches: 'No matching vocabulary found. Try different search terms.'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -51,7 +64,20 @@ class VocabMasterApp {
                 deleteConfirm: 'هل أنت متأكد من حذف:',
                 startTest: 'بدء الاختبار',
                 submit: 'إرسال',
-                skip: 'تخطي'
+                skip: 'تخطي',
+                assessmentReady: 'الاختبار جاهز',
+                evaluateMastery: 'قيم إتقانك لـ',
+                word: 'كلمة',
+                words: 'كلمات',
+                question: 'السؤال',
+                of: 'من',
+                enterTranslation: 'أدخل الترجمة...',
+                addWordsFirst: 'يرجى إضافة كلمات مفردات إلى مجموعتك قبل إجراء الاختبار.',
+                emptyCollection: 'مجموعة المفردات فارغة. ابدأ ببناء معرفتك بإضافة كلمتك الأولى!',
+                searchPlaceholder: 'البحث في الكلمات أو الترجمات...',
+                noWordsForSearch: 'لا توجد مفردات متاحة للبحث. يرجى إضافة كلمات إلى مجموعتك أولاً.',
+                startTyping: 'ابدأ الكتابة للبحث في مفرداتك',
+                noMatches: 'لم يتم العثور على مفردات مطابقة. جرب مصطلحات بحث مختلفة.'
             }
         };
         this.init();
@@ -386,7 +412,7 @@ class VocabMasterApp {
 
     renderWordCards() {
         if (this.words.length === 0) {
-            return '<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm col-span-full text-center"><p class="text-slate-500">Your vocabulary collection is empty. Start building your knowledge by adding your first word!</p></div>';
+            return `<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm col-span-full text-center"><p class="text-slate-500">${this.t('emptyCollection')}</p></div>`;
         }
         
         return this.words.map(word => `
@@ -465,15 +491,17 @@ class VocabMasterApp {
 
     renderTest() {
         if (this.words.length === 0) {
-            return '<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm text-center"><p class="text-slate-500">Please add vocabulary words to your collection before taking a test.</p></div>';
+            return `<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm text-center"><p class="text-slate-500">${this.t('addWordsFirst')}</p></div>`;
         }
         
         if (!this.currentTest) {
+            const wordCount = this.words.length;
+            const wordText = wordCount === 1 ? this.t('word') : this.t('words');
             return `
                 <div class="max-w-2xl mx-auto">
                     <div class="bg-white rounded-lg p-8 border border-slate-200 shadow-sm text-center">
-                        <h2 class="text-2xl font-semibold text-slate-800 mb-4">Assessment Ready</h2>
-                        <p class="text-slate-600 mb-6">Evaluate your mastery of ${this.words.length} ${this.words.length === 1 ? 'word' : 'words'}</p>
+                        <h2 class="text-2xl font-semibold text-slate-800 mb-4">${this.t('assessmentReady')}</h2>
+                        <p class="text-slate-600 mb-6">${this.t('evaluateMastery')} ${wordCount} ${wordText}</p>
                         <button class="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-lg text-base font-medium hover:bg-blue-700 transition-all duration-200" onclick="app.startTest()">
                             <i class="fas fa-play"></i>
                             ${this.t('startTest')}
@@ -492,12 +520,12 @@ class VocabMasterApp {
                     <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden mb-2">
                         <div class="h-full bg-blue-600 transition-all duration-300" style="width: ${progress}%"></div>
                     </div>
-                    <p class="text-center text-slate-600">Question ${this.currentTest.currentIndex + 1} of ${this.currentTest.questions.length}</p>
+                    <p class="text-center text-slate-600">${this.t('question')} ${this.currentTest.currentIndex + 1} ${this.t('of')} ${this.currentTest.questions.length}</p>
                 </div>
                 
                 <div class="bg-white rounded-lg p-8 border border-slate-200 shadow-sm text-center mb-8">
                     <div class="text-3xl font-semibold text-slate-800 mb-8">${question.question}</div>
-                    <input type="text" class="w-full px-4 py-4 text-lg border-2 border-slate-300 rounded-lg text-center mb-4 transition-all duration-200 focus:outline-none focus:border-blue-500" id="answerInput" placeholder="Enter your translation...">
+                    <input type="text" class="w-full px-4 py-4 text-lg border-2 border-slate-300 rounded-lg text-center mb-4 transition-all duration-200 focus:outline-none focus:border-blue-500" id="answerInput" placeholder="${this.t('enterTranslation')}">
                     <div class="flex gap-4 justify-center">
                         <button class="px-6 py-3 bg-white text-slate-700 border border-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200" onclick="app.skipQuestion()">${this.t('skip')}</button>
                         <button class="px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all duration-200" onclick="app.submitAnswer()">${this.t('submit')}</button>
@@ -525,10 +553,10 @@ class VocabMasterApp {
                 <h2 class="text-2xl font-semibold text-slate-800 mb-8">${this.t('search')} ${this.t('vocabulary')}</h2>
                 <div class="relative mb-8">
                     <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="searchInput" placeholder="Search words or translations..." class="w-full pl-12 pr-4 py-4 text-lg border border-slate-300 rounded-lg bg-white transition-all duration-200 focus:outline-none focus:border-blue-500 focus:ring-3 focus:ring-blue-100">
+                    <input type="text" id="searchInput" placeholder="${this.t('searchPlaceholder')}" class="w-full pl-12 pr-4 py-4 text-lg border border-slate-300 rounded-lg bg-white transition-all duration-200 focus:outline-none focus:border-blue-500 focus:ring-3 focus:ring-blue-100">
                 </div>
                 <div class="flex flex-col gap-4" id="searchResults">
-                    ${this.words.length === 0 ? '<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm text-center"><p class="text-slate-500">No vocabulary available for search. Please add words to your collection first.</p></div>' : ''}
+                    ${this.words.length === 0 ? `<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm text-center"><p class="text-slate-500">${this.t('noWordsForSearch')}</p></div>` : `<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm text-center"><p class="text-slate-500">${this.t('startTyping')}</p></div>`}
                 </div>
             </div>
         `;
@@ -561,7 +589,7 @@ class VocabMasterApp {
         );
         
         if (matches.length === 0) {
-            results.innerHTML = `<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm text-center"><p class="text-slate-500">No matching vocabulary found. Try different search terms.</p></div>`;
+            results.innerHTML = `<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm text-center"><p class="text-slate-500">${this.t('noMatches')}</p></div>`;
             return;
         }
         

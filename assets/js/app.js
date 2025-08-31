@@ -15,13 +15,37 @@ class VocabMasterApp {
                 dashboard: 'Dashboard',
                 vocabulary: 'Vocabulary',
                 test: 'Test',
-                search: 'Search'
+                search: 'Search',
+                totalWords: 'Total Words',
+                studiedToday: 'Studied Today',
+                accuracy: 'Accuracy',
+                studyStreak: 'Study Streak',
+                addWord: 'Add Word',
+                englishWord: 'English Word',
+                arabicTranslation: 'Arabic Translation',
+                cancel: 'Cancel',
+                delete: 'Delete',
+                startTest: 'Start Test',
+                submit: 'Submit',
+                skip: 'Skip'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
                 vocabulary: 'المفردات',
                 test: 'الاختبار',
-                search: 'البحث'
+                search: 'البحث',
+                totalWords: 'إجمالي الكلمات',
+                studiedToday: 'درست اليوم',
+                accuracy: 'الدقة',
+                studyStreak: 'أيام متتالية',
+                addWord: 'إضافة كلمة',
+                englishWord: 'الكلمة الإنجليزية',
+                arabicTranslation: 'الترجمة العربية',
+                cancel: 'إلغاء',
+                delete: 'حذف',
+                startTest: 'بدء الاختبار',
+                submit: 'إرسال',
+                skip: 'تخطي'
             }
         };
         this.init();

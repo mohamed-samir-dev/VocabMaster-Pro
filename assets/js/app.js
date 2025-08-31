@@ -464,6 +464,21 @@ class VocabMasterApp {
     }
 
     async addWord(english, arabic) {
+        // Validate inputs
+        if (!english || !arabic || !english.trim() || !arabic.trim()) {
+            this.showToast('Please provide both English word and Arabic translation.', 'error');
+            return;
+        }
+        
+        // Check for duplicates
+        const duplicate = this.words.find(word => 
+            word.english.toLowerCase() === english.toLowerCase().trim()
+        );
+        if (duplicate) {
+            this.showToast('This English word already exists in your vocabulary.', 'error');
+            return;
+        }
+        
         try {
             const docRef = await firebase.addDoc(firebase.collection(firebase.db, 'words'), {
                 english,
@@ -493,6 +508,11 @@ class VocabMasterApp {
     }
 
     startTest() {
+        if (this.words.length === 0) {
+            this.showToast('Please add vocabulary words before starting a test.', 'error');
+            return;
+        }
+        
         const shuffled = [...this.words].sort(() => Math.random() - 0.5);
         const questions = shuffled.slice(0, Math.min(10, this.words.length)).map(word => ({
             question: Math.random() > 0.5 ? word.english : word.arabic,

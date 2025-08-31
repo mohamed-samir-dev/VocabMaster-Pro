@@ -319,10 +319,10 @@ class VocabMasterApp {
     renderVocabulary() {
         return `
             <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
-                <h2 class="text-2xl font-semibold text-slate-800">Vocabulary</h2>
+                <h2 class="text-2xl font-semibold text-slate-800">${this.t('vocabulary')}</h2>
                 <button class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all duration-200" id="addWordBtn">
                     <i class="fas fa-plus"></i>
-                    Add Word
+                    ${this.t('addWord')}
                 </button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="vocabularyGrid">

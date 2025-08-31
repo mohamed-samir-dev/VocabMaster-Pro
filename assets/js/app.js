@@ -210,7 +210,7 @@ class VocabMasterApp {
         
         switch (this.currentPage) {
             case 'dashboard':
-                pageContent.innerHTML = '<h2>Dashboard Content</h2>';
+                pageContent.innerHTML = this.renderDashboard();
                 break;
             case 'vocabulary':
                 pageContent.innerHTML = '<h2>Vocabulary Content</h2>';
@@ -222,8 +222,54 @@ class VocabMasterApp {
                 pageContent.innerHTML = '<h2>Search Content</h2>';
                 break;
             default:
-                pageContent.innerHTML = '<h2>Dashboard Content</h2>';
+                pageContent.innerHTML = this.renderDashboard();
         }
+    }
+
+    renderDashboard() {
+        return `
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm font-medium text-slate-500 uppercase tracking-wide">Total Words</span>
+                        <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-xl text-blue-600">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 mb-2">${this.stats.totalWords}</div>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm font-medium text-slate-500 uppercase tracking-wide">Studied Today</span>
+                        <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center text-xl text-green-600">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 mb-2">${this.stats.studiedToday}</div>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm font-medium text-slate-500 uppercase tracking-wide">Accuracy</span>
+                        <div class="w-12 h-12 bg-yellow-50 rounded-lg flex items-center justify-center text-xl text-yellow-600">
+                            <i class="fas fa-target"></i>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 mb-2">${this.stats.accuracy}%</div>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm font-medium text-slate-500 uppercase tracking-wide">Study Streak</span>
+                        <div class="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center text-xl text-orange-600">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 mb-2">${this.stats.streak}</div>
+                </div>
+            </div>
+        `;
     }
 }
 

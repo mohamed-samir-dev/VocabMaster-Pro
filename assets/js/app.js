@@ -132,6 +132,23 @@ class VocabMasterApp {
         return streak;
     }
 
+    showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-yellow-500';
+        toast.className = `${bgColor} text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 min-w-80 animate-pulse`;
+        toast.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'exclamation'}"></i>
+            <span>${message}</span>
+        `;
+
+        const container = document.getElementById('toastContainer');
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+
     navigateTo(page) {
         // Update active nav item
         document.querySelectorAll('.nav-item').forEach(item => {

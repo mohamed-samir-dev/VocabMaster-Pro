@@ -450,6 +450,64 @@ class VocabMasterApp {
             this.showToast('Unable to delete word. Please try again.', 'error');
         }
     }
+
+    startTest() {
+        const shuffled = [...this.words].sort(() => Math.random() - 0.5);
+        const questions = shuffled.slice(0, Math.min(10, this.words.length)).map(word => ({
+            question: Math.random() > 0.5 ? word.english : word.arabic,
+            answer: Math.random() > 0.5 ? word.arabic : word.english,
+            word
+        }));
+        
+        this.currentTest = {
+            questions,
+            currentIndex: 0,
+            answers: [],
+            startTime: new Date()
+        };
+        
+        this.renderCurrentPage();
+    }
+
+    submitAnswer() {
+        const userAnswer = document.getElementById('answerInput').value.trim();
+        const question = this.currentTest.questions[this.currentTest.currentIndex];
+        const isCorrect = userAnswer.toLowerCase() === question.answer.toLowerCase();
+        
+        this.currentTest.answers.push({ userAnswer, correct: isCorrect });
+        this.nextQuestion();
+    }
+
+    skipQuestion() {
+        this.currentTest.answers.push({ userAnswer: '', correct: false });
+        this.nextQuestion();
+    }
+
+    nextQuestion() {
+        this.currentTest.currentIndex++;
+        
+        if (this.currentTest.currentIndex >= this.currentTest.questions.length) {
+            this.finishTest();
+        } else {
+            this.renderCurrentPage();
+        }
+    }
+
+    finishTest() {
+        const correct = this.currentTest.answers.filter(a => a.correct).length;
+        const total = this.currentTest.answers.length;
+        const percentage = Math.round((correct / total) * 100);
+        
+        this.showTestResults(correct, total, percentage);
+        this.currentTest = null;
+    }
+
+    showTestResults(correct, total, percentage) {
+        const performanceLevel = percentage >= 90 ? 'Excellent' : percentage >= 70 ? 'Good' : percentage >= 50 ? 'Fair' : 'Needs Improvement';
+        
+        this.showToast(`Test completed! Score: ${correct}/${total} (${percentage}%) - ${performanceLevel}`, 'success');
+        this.navigateTo('dashboard');
+    }
 }
 
 // Initialize the app when DOM is loaded

@@ -328,6 +328,27 @@ class VocabMasterApp {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="vocabularyGrid">
                 ${this.renderWordCards()}
             </div>
+            
+            <!-- Add Word Modal -->
+            <div id="addWordModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
+                <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-4">${this.t('addWord')}</h3>
+                    <form id="addWordForm">
+                        <div class="mb-4">
+                            <label class="block text-slate-700 text-sm font-medium mb-2">${this.t('englishWord')}</label>
+                            <input type="text" id="englishInput" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-slate-700 text-sm font-medium mb-2">${this.t('arabicTranslation')}</label>
+                            <input type="text" id="arabicInput" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="button" onclick="app.hideAddWordModal()" class="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors">${this.t('cancel')}</button>
+                            <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">${this.t('addWord')}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         `;
     }
 
@@ -354,7 +375,37 @@ class VocabMasterApp {
     }
 
     setupVocabularyEvents() {
-        // Vocabulary event listeners will be added here
+        const addWordBtn = document.getElementById('addWordBtn');
+        if (addWordBtn) {
+            addWordBtn.addEventListener('click', () => this.showAddWordModal());
+        }
+        
+        const form = document.getElementById('addWordForm');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const english = document.getElementById('englishInput').value.trim();
+                const arabic = document.getElementById('arabicInput').value.trim();
+                if (english && arabic) {
+                    this.addWord(english, arabic);
+                    this.hideAddWordModal();
+                }
+            });
+        }
+    }
+    
+    showAddWordModal() {
+        const modal = document.getElementById('addWordModal');
+        modal.classList.remove('opacity-0', 'invisible');
+        modal.classList.add('opacity-100', 'visible');
+        document.getElementById('englishInput').focus();
+    }
+    
+    hideAddWordModal() {
+        const modal = document.getElementById('addWordModal');
+        modal.classList.remove('opacity-100', 'visible');
+        modal.classList.add('opacity-0', 'invisible');
+        document.getElementById('addWordForm').reset();
     }
 
     renderTest() {
@@ -431,8 +482,12 @@ class VocabMasterApp {
     setupSearchEvents() {
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
+            let searchTimeout;
             searchInput.addEventListener('input', (e) => {
-                this.performSearch(e.target.value);
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    this.performSearch(e.target.value);
+                }, 300);
             });
         }
     }

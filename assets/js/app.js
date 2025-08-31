@@ -92,13 +92,40 @@ class VocabMasterApp {
     }
 
     getPageTitle(page) {
-        const titles = {
-            dashboard: 'Dashboard',
-            vocabulary: 'Vocabulary',
-            test: 'Test',
-            search: 'Search'
-        };
-        return titles[page] || 'Dashboard';
+        return this.t(page) || this.t('dashboard');
+    }
+
+    t(key) {
+        return this.translations[this.currentLang][key] || key;
+    }
+
+    toggleLanguage() {
+        this.currentLang = this.currentLang === 'en' ? 'ar' : 'en';
+        document.documentElement.lang = this.currentLang;
+        document.documentElement.dir = this.currentLang === 'ar' ? 'rtl' : 'ltr';
+        document.getElementById('langText').textContent = this.currentLang === 'en' ? 'العربية' : 'English';
+        
+        // Update main content margin for RTL
+        const mainContent = document.getElementById('mainContent');
+        if (this.currentLang === 'ar') {
+            mainContent.classList.remove('md:ml-72');
+            mainContent.classList.add('md:mr-72');
+        } else {
+            mainContent.classList.remove('md:mr-72');
+            mainContent.classList.add('md:ml-72');
+        }
+        
+        this.updateNavigation();
+        this.navigateTo(this.currentPage);
+    }
+
+    updateNavigation() {
+        document.querySelectorAll('.nav-item span').forEach((span, index) => {
+            const pages = ['dashboard', 'vocabulary', 'test', 'search'];
+            span.textContent = this.t(pages[index]);
+        });
+        document.querySelector('.page-title').textContent = this.getPageTitle(this.currentPage);
+        document.getElementById('searchBtnText').textContent = this.t('search');
     }
 
     renderCurrentPage() {

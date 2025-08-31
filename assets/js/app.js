@@ -370,7 +370,7 @@ class VocabMasterApp {
                         <p class="text-slate-600 mb-6">Evaluate your mastery of ${this.words.length} ${this.words.length === 1 ? 'word' : 'words'}</p>
                         <button class="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-lg text-base font-medium hover:bg-blue-700 transition-all duration-200" onclick="app.startTest()">
                             <i class="fas fa-play"></i>
-                            Start Test
+                            ${this.t('startTest')}
                         </button>
                     </div>
                 </div>
@@ -393,8 +393,8 @@ class VocabMasterApp {
                     <div class="text-3xl font-semibold text-slate-800 mb-8">${question.question}</div>
                     <input type="text" class="w-full px-4 py-4 text-lg border-2 border-slate-300 rounded-lg text-center mb-4 transition-all duration-200 focus:outline-none focus:border-blue-500" id="answerInput" placeholder="Enter your translation...">
                     <div class="flex gap-4 justify-center">
-                        <button class="px-6 py-3 bg-white text-slate-700 border border-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200" onclick="app.skipQuestion()">Skip</button>
-                        <button class="px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all duration-200" onclick="app.submitAnswer()">Submit</button>
+                        <button class="px-6 py-3 bg-white text-slate-700 border border-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200" onclick="app.skipQuestion()">${this.t('skip')}</button>
+                        <button class="px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all duration-200" onclick="app.submitAnswer()">${this.t('submit')}</button>
                     </div>
                 </div>
             </div>

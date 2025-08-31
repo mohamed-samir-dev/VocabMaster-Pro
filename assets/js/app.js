@@ -217,7 +217,8 @@ class VocabMasterApp {
                 this.setupVocabularyEvents();
                 break;
             case 'test':
-                pageContent.innerHTML = '<h2>Test Content</h2>';
+                pageContent.innerHTML = this.renderTest();
+                this.setupTestEvents();
                 break;
             case 'search':
                 pageContent.innerHTML = '<h2>Search Content</h2>';
@@ -312,6 +313,62 @@ class VocabMasterApp {
 
     setupVocabularyEvents() {
         // Vocabulary event listeners will be added here
+    }
+
+    renderTest() {
+        if (this.words.length === 0) {
+            return '<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm text-center"><p class="text-slate-500">Please add vocabulary words to your collection before taking a test.</p></div>';
+        }
+        
+        if (!this.currentTest) {
+            return `
+                <div class="max-w-2xl mx-auto">
+                    <div class="bg-white rounded-lg p-8 border border-slate-200 shadow-sm text-center">
+                        <h2 class="text-2xl font-semibold text-slate-800 mb-4">Assessment Ready</h2>
+                        <p class="text-slate-600 mb-6">Evaluate your mastery of ${this.words.length} ${this.words.length === 1 ? 'word' : 'words'}</p>
+                        <button class="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-lg text-base font-medium hover:bg-blue-700 transition-all duration-200" onclick="app.startTest()">
+                            <i class="fas fa-play"></i>
+                            Start Test
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        const question = this.currentTest.questions[this.currentTest.currentIndex];
+        const progress = ((this.currentTest.currentIndex + 1) / this.currentTest.questions.length) * 100;
+        
+        return `
+            <div class="max-w-2xl mx-auto">
+                <div class="mb-8">
+                    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden mb-2">
+                        <div class="h-full bg-blue-600 transition-all duration-300" style="width: ${progress}%"></div>
+                    </div>
+                    <p class="text-center text-slate-600">Question ${this.currentTest.currentIndex + 1} of ${this.currentTest.questions.length}</p>
+                </div>
+                
+                <div class="bg-white rounded-lg p-8 border border-slate-200 shadow-sm text-center mb-8">
+                    <div class="text-3xl font-semibold text-slate-800 mb-8">${question.question}</div>
+                    <input type="text" class="w-full px-4 py-4 text-lg border-2 border-slate-300 rounded-lg text-center mb-4 transition-all duration-200 focus:outline-none focus:border-blue-500" id="answerInput" placeholder="Enter your translation...">
+                    <div class="flex gap-4 justify-center">
+                        <button class="px-6 py-3 bg-white text-slate-700 border border-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200" onclick="app.skipQuestion()">Skip</button>
+                        <button class="px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all duration-200" onclick="app.submitAnswer()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    setupTestEvents() {
+        const answerInput = document.getElementById('answerInput');
+        if (answerInput) {
+            answerInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.submitAnswer();
+                }
+            });
+            answerInput.focus();
+        }
     }
 }
 

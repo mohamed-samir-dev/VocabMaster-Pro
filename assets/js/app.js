@@ -62,7 +62,13 @@ class VocabMasterApp {
                 recentActivity: 'Recent Activity',
                 wordsThisWeek: 'Words This Week',
                 averageScore: 'Average Score',
-                completionRate: 'Completion Rate'
+                completionRate: 'Completion Rate',
+                goalProgress: 'Goal Progress',
+                beginner: 'Beginner',
+                intermediate: 'Intermediate',
+                advanced: 'Advanced',
+                expert: 'Expert',
+                appTitle: 'VocabMaster Pro'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -115,7 +121,13 @@ class VocabMasterApp {
                 recentActivity: 'النشاط الأخير',
                 wordsThisWeek: 'كلمات هذا الأسبوع',
                 averageScore: 'متوسط النتيجة',
-                completionRate: 'معدل الإنجاز'
+                completionRate: 'معدل الإنجاز',
+                goalProgress: 'تقدم الهدف',
+                beginner: 'مبتدئ',
+                intermediate: 'متوسط',
+                advanced: 'متقدم',
+                expert: 'خبير',
+                appTitle: 'ماستر المفردات برو'
             }
         };
         this.init();
@@ -270,8 +282,8 @@ class VocabMasterApp {
     
     calculateProgressRate() {
         if (this.words.length === 0) return 0;
-        const testedWords = this.words.filter(word => word.quizResults && word.quizResults.length > 0).length;
-        return Math.round((testedWords / this.words.length) * 100);
+        const studiedWords = this.words.filter(word => word.lastStudied).length;
+        return Math.round((studiedWords / this.words.length) * 100);
     }
     
     calculateWeeklyGoal() {
@@ -310,8 +322,20 @@ class VocabMasterApp {
     }
     
     calculateAverageScore() {
-        // Use the existing accuracy calculation as average score
-        return this.stats.accuracy || 0;
+        const wordsWithResults = this.words.filter(word => word.quizResults && word.quizResults.length > 0);
+        if (wordsWithResults.length === 0) return 0;
+        
+        let totalScore = 0;
+        let totalAttempts = 0;
+        
+        wordsWithResults.forEach(word => {
+            const correctCount = word.quizResults.filter(result => result.correct).length;
+            const wordScore = (correctCount / word.quizResults.length) * 100;
+            totalScore += wordScore;
+            totalAttempts++;
+        });
+        
+        return Math.round(totalScore / totalAttempts);
     }
     
     calculateCompletionRate() {
@@ -393,6 +417,7 @@ class VocabMasterApp {
         });
         document.querySelector('.page-title').textContent = this.getPageTitle(this.currentPage);
         document.getElementById('searchBtnText').textContent = this.t('search');
+        document.getElementById('appTitle').textContent = this.t('appTitle');
     }
 
     renderCurrentPage() {
@@ -498,14 +523,14 @@ class VocabMasterApp {
                             this.stats.masteryLevel === 'Advanced' ? 'bg-blue-100 text-blue-800' :
                             this.stats.masteryLevel === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
                             'bg-gray-100 text-gray-800'
-                        }">${this.stats.masteryLevel}</span>
+                        }">${this.t(this.stats.masteryLevel.toLowerCase())}</span>
                     </div>
                     <div class="w-full bg-slate-200 rounded-full h-2 mb-4">
                         <div class="bg-green-600 h-2 rounded-full transition-all duration-300" style="width: ${Math.min(this.stats.weeklyGoal, 100)}%"></div>
                     </div>
                     <div class="text-center">
                         <div class="text-2xl font-bold text-slate-800 mb-1">${this.stats.weeklyGoal}%</div>
-                        <div class="text-sm text-slate-500">Goal Progress</div>
+                        <div class="text-sm text-slate-500">${this.t('goalProgress')}</div>
                     </div>
                 </div>
             </div>
@@ -816,11 +841,14 @@ class VocabMasterApp {
         }
         
         const shuffled = [...this.words].sort(() => Math.random() - 0.5);
-        const questions = shuffled.slice(0, Math.min(10, this.words.length)).map(word => ({
-            question: Math.random() > 0.5 ? word.english : word.arabic,
-            answer: Math.random() > 0.5 ? word.arabic : word.english,
-            word
-        }));
+        const questions = shuffled.map(word => {
+            const isEnglishToArabic = Math.random() > 0.5;
+            return {
+                question: isEnglishToArabic ? word.english : word.arabic,
+                answer: isEnglishToArabic ? word.arabic : word.english,
+                word
+            };
+        });
         
         this.currentTest = {
             questions,
@@ -835,7 +863,13 @@ class VocabMasterApp {
     submitAnswer() {
         const userAnswer = document.getElementById('answerInput').value.trim();
         const question = this.currentTest.questions[this.currentTest.currentIndex];
-        const isCorrect = userAnswer.toLowerCase() === question.answer.toLowerCase();
+        const correctAnswer = question.answer.trim();
+        
+        // Normalize both answers for comparison
+        const normalizedUser = userAnswer.toLowerCase().replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, '').trim();
+        const normalizedCorrect = correctAnswer.toLowerCase().replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, '').trim();
+        
+        const isCorrect = normalizedUser === normalizedCorrect;
         
         this.currentTest.answers.push({ userAnswer, correct: isCorrect });
         this.nextQuestion();

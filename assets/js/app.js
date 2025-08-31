@@ -22,7 +22,24 @@ class VocabMasterApp {
     }
 
     setupEventListeners() {
-        // Navigation event listeners will be added here
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const page = e.currentTarget.dataset.page;
+                this.navigateTo(page);
+            });
+        });
+
+        // Sidebar toggle for mobile
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        const sidebar = document.querySelector('.sidebar-slide');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('open');
+            });
+        }
     }
 
     showLoading() {

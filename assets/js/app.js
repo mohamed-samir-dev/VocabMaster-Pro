@@ -213,7 +213,8 @@ class VocabMasterApp {
                 pageContent.innerHTML = this.renderDashboard();
                 break;
             case 'vocabulary':
-                pageContent.innerHTML = '<h2>Vocabulary Content</h2>';
+                pageContent.innerHTML = this.renderVocabulary();
+                this.setupVocabularyEvents();
                 break;
             case 'test':
                 pageContent.innerHTML = '<h2>Test Content</h2>';
@@ -270,6 +271,47 @@ class VocabMasterApp {
                 </div>
             </div>
         `;
+    }
+
+    renderVocabulary() {
+        return `
+            <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
+                <h2 class="text-2xl font-semibold text-slate-800">Vocabulary</h2>
+                <button class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all duration-200" id="addWordBtn">
+                    <i class="fas fa-plus"></i>
+                    Add Word
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="vocabularyGrid">
+                ${this.renderWordCards()}
+            </div>
+        `;
+    }
+
+    renderWordCards() {
+        if (this.words.length === 0) {
+            return '<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm col-span-full text-center"><p class="text-slate-500">Your vocabulary collection is empty. Start building your knowledge by adding your first word!</p></div>';
+        }
+        
+        return this.words.map(word => `
+            <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex-1">
+                        <div class="text-xl font-semibold text-slate-800 mb-1">${word.english}</div>
+                        <div class="text-base text-slate-600">${word.arabic}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="w-9 h-9 border-0 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-red-500 hover:text-white" onclick="app.deleteWord('${word.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    setupVocabularyEvents() {
+        // Vocabulary event listeners will be added here
     }
 }
 

@@ -221,7 +221,8 @@ class VocabMasterApp {
                 this.setupTestEvents();
                 break;
             case 'search':
-                pageContent.innerHTML = '<h2>Search Content</h2>';
+                pageContent.innerHTML = this.renderSearch();
+                this.setupSearchEvents();
                 break;
             default:
                 pageContent.innerHTML = this.renderDashboard();
@@ -369,6 +370,56 @@ class VocabMasterApp {
             });
             answerInput.focus();
         }
+    }
+
+    renderSearch() {
+        return `
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-2xl font-semibold text-slate-800 mb-8">Search Vocabulary</h2>
+                <div class="relative mb-8">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search words or translations..." class="w-full pl-12 pr-4 py-4 text-lg border border-slate-300 rounded-lg bg-white transition-all duration-200 focus:outline-none focus:border-blue-500 focus:ring-3 focus:ring-blue-100">
+                </div>
+                <div class="flex flex-col gap-4" id="searchResults">
+                    ${this.words.length === 0 ? '<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm text-center"><p class="text-slate-500">No vocabulary available for search. Please add words to your collection first.</p></div>' : ''}
+                </div>
+            </div>
+        `;
+    }
+
+    setupSearchEvents() {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.performSearch(e.target.value);
+            });
+        }
+    }
+
+    performSearch(query) {
+        const results = document.getElementById('searchResults');
+        
+        if (!query.trim()) {
+            results.innerHTML = '';
+            return;
+        }
+        
+        const matches = this.words.filter(word => 
+            word.english.toLowerCase().includes(query.toLowerCase()) ||
+            word.arabic.includes(query)
+        );
+        
+        if (matches.length === 0) {
+            results.innerHTML = `<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm text-center"><p class="text-slate-500">No matching vocabulary found. Try different search terms.</p></div>`;
+            return;
+        }
+        
+        results.innerHTML = matches.map(word => `
+            <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm">
+                <div class="text-xl font-semibold text-slate-800">${word.english}</div>
+                <div class="text-base text-slate-600">${word.arabic}</div>
+            </div>
+        `).join('');
     }
 }
 

@@ -25,6 +25,9 @@ class VocabMasterApp {
                 arabicTranslation: 'Arabic Translation',
                 cancel: 'Cancel',
                 delete: 'Delete',
+                deleteWord: 'Delete Word',
+                deleteWarning: 'This action cannot be undone',
+                deleteConfirm: 'Are you sure you want to delete:',
                 startTest: 'Start Test',
                 submit: 'Submit',
                 skip: 'Skip'
@@ -43,6 +46,9 @@ class VocabMasterApp {
                 arabicTranslation: 'الترجمة العربية',
                 cancel: 'إلغاء',
                 delete: 'حذف',
+                deleteWord: 'حذف الكلمة',
+                deleteWarning: 'لا يمكن التراجع عن هذا الإجراء',
+                deleteConfirm: 'هل أنت متأكد من حذف:',
                 startTest: 'بدء الاختبار',
                 submit: 'إرسال',
                 skip: 'تخطي'
@@ -349,6 +355,32 @@ class VocabMasterApp {
                     </form>
                 </div>
             </div>
+            
+            <!-- Delete Confirmation Modal -->
+            <div id="deleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
+                <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-slate-800">${this.t('deleteWord')}</h3>
+                            <p class="text-slate-600 text-sm">${this.t('deleteWarning')}</p>
+                        </div>
+                    </div>
+                    <div class="mb-6 p-4 bg-slate-50 rounded-lg">
+                        <p class="text-slate-700">${this.t('deleteConfirm')}</p>
+                        <div class="mt-2">
+                            <p class="font-semibold text-slate-800" id="deleteWordEnglish"></p>
+                            <p class="text-slate-600" id="deleteWordArabic"></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="button" onclick="app.hideDeleteConfirmModal()" class="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors">${this.t('cancel')}</button>
+                        <button type="button" onclick="app.confirmDeleteWord()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">${this.t('delete')}</button>
+                    </div>
+                </div>
+            </div>
         `;
     }
 
@@ -365,7 +397,7 @@ class VocabMasterApp {
                         <div class="text-base text-slate-600">${word.arabic}</div>
                     </div>
                     <div class="flex gap-2">
-                        <button class="w-9 h-9 border-0 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-red-500 hover:text-white" onclick="app.deleteWord('${word.id}')">
+                        <button class="w-9 h-9 border-0 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-red-500 hover:text-white" onclick="app.showDeleteConfirmModal('${word.id}', '${word.english}', '${word.arabic}')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -406,6 +438,29 @@ class VocabMasterApp {
         modal.classList.remove('opacity-100', 'visible');
         modal.classList.add('opacity-0', 'invisible');
         document.getElementById('addWordForm').reset();
+    }
+    
+    showDeleteConfirmModal(wordId, english, arabic) {
+        this.wordToDelete = wordId;
+        document.getElementById('deleteWordEnglish').textContent = english;
+        document.getElementById('deleteWordArabic').textContent = arabic;
+        const modal = document.getElementById('deleteConfirmModal');
+        modal.classList.remove('opacity-0', 'invisible');
+        modal.classList.add('opacity-100', 'visible');
+    }
+    
+    hideDeleteConfirmModal() {
+        const modal = document.getElementById('deleteConfirmModal');
+        modal.classList.remove('opacity-100', 'visible');
+        modal.classList.add('opacity-0', 'invisible');
+        this.wordToDelete = null;
+    }
+    
+    confirmDeleteWord() {
+        if (this.wordToDelete) {
+            this.deleteWord(this.wordToDelete);
+            this.hideDeleteConfirmModal();
+        }
     }
 
     renderTest() {

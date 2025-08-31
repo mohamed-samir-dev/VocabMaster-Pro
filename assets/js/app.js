@@ -55,7 +55,14 @@ class VocabMasterApp {
                 fair: 'Fair',
                 needsImprovement: 'Needs Improvement',
                 retakeTest: 'Retake Test',
-                backToDashboard: 'Back to Dashboard'
+                backToDashboard: 'Back to Dashboard',
+                progressRate: 'Progress Rate',
+                weeklyGoal: 'Weekly Goal',
+                masteryLevel: 'Mastery Level',
+                recentActivity: 'Recent Activity',
+                wordsThisWeek: 'Words This Week',
+                averageScore: 'Average Score',
+                completionRate: 'Completion Rate'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -101,7 +108,14 @@ class VocabMasterApp {
                 fair: 'مقبول',
                 needsImprovement: 'يحتاج تحسين',
                 retakeTest: 'إعادة الاختبار',
-                backToDashboard: 'العودة للوحة التحكم'
+                backToDashboard: 'العودة للوحة التحكم',
+                progressRate: 'معدل التقدم',
+                weeklyGoal: 'الهدف الأسبوعي',
+                masteryLevel: 'مستوى الإتقان',
+                recentActivity: 'النشاط الأخير',
+                wordsThisWeek: 'كلمات هذا الأسبوع',
+                averageScore: 'متوسط النتيجة',
+                completionRate: 'معدل الإنجاز'
             }
         };
         this.init();
@@ -200,23 +214,48 @@ class VocabMasterApp {
             const correctAttempts = recentQuizzes.reduce((sum, word) => 
                 sum + word.quizResults.filter(result => result.correct).length, 0);
             this.stats.accuracy = Math.round((correctAttempts / totalAttempts) * 100);
+        } else {
+            this.stats.accuracy = 0;
         }
 
         // Calculate streak
         this.stats.streak = this.calculateStreak();
+        
+        // Calculate additional stats with error handling
+        try {
+            this.stats.progressRate = this.calculateProgressRate();
+            this.stats.weeklyGoal = this.calculateWeeklyGoal();
+            this.stats.masteryLevel = this.calculateMasteryLevel();
+            this.stats.wordsThisWeek = this.calculateWordsThisWeek();
+            this.stats.averageScore = this.stats.accuracy; // Use accuracy as average score
+            this.stats.completionRate = this.calculateCompletionRate();
+        } catch (error) {
+            console.error('Error calculating additional stats:', error);
+            // Set default values
+            this.stats.progressRate = 0;
+            this.stats.weeklyGoal = 0;
+            this.stats.masteryLevel = 'Beginner';
+            this.stats.wordsThisWeek = 0;
+            this.stats.averageScore = 0;
+            this.stats.completionRate = 0;
+        }
     }
 
     calculateStreak() {
-        const studyDates = [...new Set(this.words
-            .filter(word => word.lastStudied)
+        const studiedWords = this.words.filter(word => word.lastStudied);
+        if (studiedWords.length === 0) return 0;
+        
+        const studyDates = [...new Set(studiedWords
             .map(word => new Date(word.lastStudied).toDateString())
         )].sort((a, b) => new Date(b) - new Date(a));
 
         let streak = 0;
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
         
         for (let i = 0; i < studyDates.length; i++) {
             const studyDate = new Date(studyDates[i]);
+            studyDate.setHours(0, 0, 0, 0);
             const daysDiff = Math.floor((today - studyDate) / (1000 * 60 * 60 * 24));
             
             if (daysDiff === i) {
@@ -227,6 +266,60 @@ class VocabMasterApp {
         }
         
         return streak;
+    }
+    
+    calculateProgressRate() {
+        if (this.words.length === 0) return 0;
+        const testedWords = this.words.filter(word => word.quizResults && word.quizResults.length > 0).length;
+        return Math.round((testedWords / this.words.length) * 100);
+    }
+    
+    calculateWeeklyGoal() {
+        const weekStart = new Date();
+        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+        weekStart.setHours(0, 0, 0, 0);
+        
+        const wordsThisWeek = this.words.filter(word => {
+            if (!word.dateAdded) return false;
+            const wordDate = new Date(word.dateAdded);
+            return wordDate >= weekStart;
+        }).length;
+        
+        const goal = 100; // Weekly goal of 100 new words
+        return Math.min(Math.round((wordsThisWeek / goal) * 100), 100);
+    }
+    
+    calculateMasteryLevel() {
+        const accuracy = this.stats.accuracy || 0;
+        if (accuracy >= 90) return 'Expert';
+        if (accuracy >= 75) return 'Advanced';
+        if (accuracy >= 60) return 'Intermediate';
+        return 'Beginner';
+    }
+    
+    calculateWordsThisWeek() {
+        const weekStart = new Date();
+        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+        weekStart.setHours(0, 0, 0, 0);
+        
+        return this.words.filter(word => {
+            if (!word.dateAdded) return false;
+            const wordDate = new Date(word.dateAdded);
+            return wordDate >= weekStart;
+        }).length;
+    }
+    
+    calculateAverageScore() {
+        // Use the existing accuracy calculation as average score
+        return this.stats.accuracy || 0;
+    }
+    
+    calculateCompletionRate() {
+        if (this.words.length === 0) return 0;
+        const testedWords = this.words.filter(word => 
+            word.quizResults && word.quizResults.length > 0
+        ).length;
+        return Math.round((testedWords / this.words.length) * 100);
     }
 
     showToast(message, type = 'success') {
@@ -328,6 +421,7 @@ class VocabMasterApp {
 
     renderDashboard() {
         return `
+            <!-- Main Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm">
                     <div class="flex justify-between items-center mb-4">
@@ -367,6 +461,52 @@ class VocabMasterApp {
                         </div>
                     </div>
                     <div class="text-3xl font-bold text-slate-800 mb-2">${this.stats.streak}</div>
+                </div>
+            </div>
+            
+            <!-- Progress & Analytics Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Progress Rate Card -->
+                <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">${this.t('progressRate')}</h3>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm text-slate-600">${this.t('completionRate')}</span>
+                        <span class="text-sm font-medium text-slate-800">${this.stats.progressRate}%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2 mb-4">
+                        <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: ${this.stats.progressRate}%"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div class="text-2xl font-bold text-green-600">${this.stats.wordsThisWeek}</div>
+                            <div class="text-xs text-slate-500">${this.t('wordsThisWeek')}</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-purple-600">${this.stats.averageScore}%</div>
+                            <div class="text-xs text-slate-500">${this.t('averageScore')}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Weekly Goal Card -->
+                <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">${this.t('weeklyGoal')}</h3>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm text-slate-600">${this.t('masteryLevel')}</span>
+                        <span class="text-sm font-medium px-2 py-1 rounded-full ${
+                            this.stats.masteryLevel === 'Expert' ? 'bg-green-100 text-green-800' :
+                            this.stats.masteryLevel === 'Advanced' ? 'bg-blue-100 text-blue-800' :
+                            this.stats.masteryLevel === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-gray-100 text-gray-800'
+                        }">${this.stats.masteryLevel}</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2 mb-4">
+                        <div class="bg-green-600 h-2 rounded-full transition-all duration-300" style="width: ${Math.min(this.stats.weeklyGoal, 100)}%"></div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-slate-800 mb-1">${this.stats.weeklyGoal}%</div>
+                        <div class="text-sm text-slate-500">Goal Progress</div>
+                    </div>
                 </div>
             </div>
         `;
@@ -716,10 +856,38 @@ class VocabMasterApp {
         }
     }
 
-    finishTest() {
+    async finishTest() {
         const correct = this.currentTest.answers.filter(a => a.correct).length;
         const total = this.currentTest.answers.length;
         const percentage = Math.round((correct / total) * 100);
+        
+        // Update lastStudied for all tested words
+        const today = new Date().toISOString();
+        for (let i = 0; i < this.currentTest.questions.length; i++) {
+            const question = this.currentTest.questions[i];
+            const answer = this.currentTest.answers[i];
+            const word = question.word;
+            
+            try {
+                // Update in Firebase
+                await firebase.updateDoc(firebase.doc(firebase.db, 'words', word.id), {
+                    lastStudied: today,
+                    quizResults: [...(word.quizResults || []), { correct: answer.correct, date: today }]
+                });
+                
+                // Update local data
+                const wordIndex = this.words.findIndex(w => w.id === word.id);
+                if (wordIndex !== -1) {
+                    this.words[wordIndex].lastStudied = today;
+                    this.words[wordIndex].quizResults = [...(this.words[wordIndex].quizResults || []), { correct: answer.correct, date: today }];
+                }
+            } catch (error) {
+                console.error('Error updating word stats:', error);
+            }
+        }
+        
+        // Recalculate stats with new data
+        this.calculateStats();
         
         this.showTestResults(correct, total, percentage);
         this.currentTest = null;

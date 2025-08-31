@@ -69,7 +69,67 @@ class VocabMasterApp {
     }
 
     async loadData() {
-        // Data loading logic will be implemented here
+        try {
+            // Load words from Firebase
+            const wordsSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'words'));
+            this.words = [];
+            wordsSnapshot.forEach((doc) => {
+                this.words.push({ id: doc.id, ...doc.data() });
+            });
+
+            // Calculate stats
+            this.calculateStats();
+        } catch (error) {
+            console.error('Error loading data:', error);
+            this.showToast('Unable to load vocabulary data. Please check your connection.', 'error');
+        }
+    }
+
+    calculateStats() {
+        this.stats.totalWords = this.words.length;
+        
+        // Get today's date
+        const today = new Date().toDateString();
+        
+        // Calculate studied today
+        this.stats.studiedToday = this.words.filter(word => 
+            word.lastStudied && new Date(word.lastStudied).toDateString() === today
+        ).length;
+
+        // Calculate accuracy from recent quiz results
+        const recentQuizzes = this.words.filter(word => word.quizResults && word.quizResults.length > 0);
+        if (recentQuizzes.length > 0) {
+            const totalAttempts = recentQuizzes.reduce((sum, word) => sum + word.quizResults.length, 0);
+            const correctAttempts = recentQuizzes.reduce((sum, word) => 
+                sum + word.quizResults.filter(result => result.correct).length, 0);
+            this.stats.accuracy = Math.round((correctAttempts / totalAttempts) * 100);
+        }
+
+        // Calculate streak
+        this.stats.streak = this.calculateStreak();
+    }
+
+    calculateStreak() {
+        const studyDates = [...new Set(this.words
+            .filter(word => word.lastStudied)
+            .map(word => new Date(word.lastStudied).toDateString())
+        )].sort((a, b) => new Date(b) - new Date(a));
+
+        let streak = 0;
+        const today = new Date();
+        
+        for (let i = 0; i < studyDates.length; i++) {
+            const studyDate = new Date(studyDates[i]);
+            const daysDiff = Math.floor((today - studyDate) / (1000 * 60 * 60 * 24));
+            
+            if (daysDiff === i) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+        
+        return streak;
     }
 
     navigateTo(page) {

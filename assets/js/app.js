@@ -10,6 +10,61 @@ class VocabMasterApp {
             streak: 0
         };
         this.currentLang = 'en';
+        this.welcomeContent = {
+            en: [
+                {
+                    icon: '📚',
+                    title: 'Smart Vocabulary Learning',
+                    description: 'Build your English vocabulary with our intelligent learning system',
+                    subtitle: 'Your journey to English mastery begins here'
+                },
+                {
+                    icon: '🧠',
+                    title: 'Interactive Testing',
+                    description: 'Challenge yourself with adaptive quizzes and track your progress',
+                    subtitle: 'Test your knowledge and improve faster'
+                },
+                {
+                    icon: '📊',
+                    title: 'Progress Analytics',
+                    description: 'Monitor your learning journey with detailed statistics and insights',
+                    subtitle: 'See how far you\'ve come'
+                },
+                {
+                    icon: '🎯',
+                    title: 'Personalized Experience',
+                    description: 'Tailored learning paths that adapt to your pace and preferences',
+                    subtitle: 'Learning made just for you'
+                }
+            ],
+            ar: [
+                {
+                    icon: '📚',
+                    title: 'تعلم المفردات الذكي',
+                    description: 'ابني مفرداتك الإنجليزية مع نظام التعلم الذكي',
+                    subtitle: 'رحلتك لإتقان الإنجليزية تبدأ هنا'
+                },
+                {
+                    icon: '🧠',
+                    title: 'الاختبارات التفاعلية',
+                    description: 'تحدى نفسك مع الاختبارات التكيفية وتتبع تقدمك',
+                    subtitle: 'اختبر معرفتك وتحسن بشكل أسرع'
+                },
+                {
+                    icon: '📊',
+                    title: 'تحليلات التقدم',
+                    description: 'راقب رحلة تعلمك مع الإحصائيات والرؤى التفصيلية',
+                    subtitle: 'انظر إلى أي مدى وصلت'
+                },
+                {
+                    icon: '🎯',
+                    title: 'تجربة شخصية',
+                    description: 'مسارات تعلم مخصصة تتكيف مع وتيرتك وتفضيلاتك',
+                    subtitle: 'التعلم مصمم خصيصاً لك'
+                }
+            ]
+        };
+        this.currentWelcomeIndex = 0;
         this.translations = {
             en: {
                 dashboard: 'Dashboard',
@@ -78,7 +133,9 @@ class VocabMasterApp {
                 challengeText: 'Learn 5 new words today',
                 recommendationText: 'Focus on words you haven\'t tested yet',
                 viewChallenge: 'Start Challenge',
-                learnMore: 'Learn More'
+                learnMore: 'Learn More',
+                welcomeTitle: 'Welcome to VocabMaster Pro',
+                getStarted: 'Get Started'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -147,7 +204,9 @@ class VocabMasterApp {
                 challengeText: 'تعلم 5 كلمات جديدة اليوم',
                 recommendationText: 'ركز على الكلمات التي لم تختبرها بعد',
                 viewChallenge: 'بدء التحدي',
-                learnMore: 'تعلم المزيد'
+                learnMore: 'تعلم المزيد',
+                welcomeTitle: 'مرحباً بك في ماستر المفردات برو',
+                getStarted: 'ابدأ الآن'
             }
         };
         this.init();
@@ -159,6 +218,7 @@ class VocabMasterApp {
         await this.loadData();
         this.renderCurrentPage();
         this.hideLoading();
+        this.checkFirstVisit();
     }
 
     setupEventListeners() {
@@ -209,6 +269,73 @@ class VocabMasterApp {
         const overlay = document.getElementById('loadingOverlay');
         overlay.classList.remove('opacity-100', 'visible');
         overlay.classList.add('opacity-0', 'invisible');
+    }
+
+    checkFirstVisit() {
+        const hasVisited = localStorage.getItem('vocabmaster_visited');
+        if (!hasVisited) {
+            setTimeout(() => this.showWelcomeModal(), 500);
+        }
+    }
+
+    showWelcomeModal() {
+        const modal = document.getElementById('welcomeModal');
+        modal.classList.remove('opacity-0', 'invisible');
+        modal.classList.add('opacity-100', 'visible');
+        modal.querySelector('.bg-white').classList.remove('scale-95');
+        modal.querySelector('.bg-white').classList.add('scale-100');
+        
+        this.updateWelcomeModalLanguage();
+        this.startWelcomeContentRotation();
+    }
+
+    startWelcomeContentRotation() {
+        this.updateWelcomeContent();
+        this.welcomeInterval = setInterval(() => {
+            this.currentWelcomeIndex = (this.currentWelcomeIndex + 1) % this.welcomeContent[this.currentLang].length;
+            this.updateWelcomeContent();
+        }, 3000);
+    }
+
+    updateWelcomeContent() {
+        const content = this.welcomeContent[this.currentLang][this.currentWelcomeIndex];
+        const elements = {
+            icon: document.getElementById('welcomeIcon'),
+            title: document.getElementById('welcomeTitle'),
+            description: document.getElementById('welcomeDescription'),
+            subtitle: document.getElementById('welcomeSubtitle')
+        };
+
+        Object.keys(elements).forEach(key => {
+            if (elements[key]) {
+                elements[key].style.opacity = '0';
+                setTimeout(() => {
+                    elements[key].textContent = content[key];
+                    elements[key].style.opacity = '1';
+                }, 200);
+            }
+        });
+    }
+
+    closeWelcomeModal() {
+        const modal = document.getElementById('welcomeModal');
+        modal.classList.remove('opacity-100', 'visible');
+        modal.classList.add('opacity-0', 'invisible');
+        modal.querySelector('.bg-white').classList.remove('scale-100');
+        modal.querySelector('.bg-white').classList.add('scale-95');
+        
+        if (this.welcomeInterval) {
+            clearInterval(this.welcomeInterval);
+        }
+        
+        localStorage.setItem('vocabmaster_visited', 'true');
+    }
+
+    updateWelcomeModalLanguage() {
+        const titleEl = document.getElementById('welcomeModalTitle');
+        const btnEl = document.getElementById('getStartedBtn');
+        if (titleEl) titleEl.textContent = this.t('welcomeTitle');
+        if (btnEl) btnEl.textContent = this.t('getStarted');
     }
 
     async loadData() {
@@ -439,6 +566,7 @@ class VocabMasterApp {
         }
         
         this.updateNavigation();
+        this.updateWelcomeModalLanguage();
         this.navigateTo(this.currentPage);
     }
 

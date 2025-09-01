@@ -167,7 +167,9 @@ class VocabMasterApp {
                 questions: 'Questions',
                 skipped: 'Skipped',
                 question: 'Question',
-                maxQuestions: 'Max Questions'
+                maxQuestions: 'Max Questions',
+                processingResults: 'Processing Results...',
+                calculatingScore: 'Calculating Score'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -270,7 +272,9 @@ class VocabMasterApp {
                 questions: 'أسئلة',
                 skipped: 'تم تخطيها',
                 question: 'السؤال',
-                maxQuestions: 'الحد الأقصى للأسئلة'
+                maxQuestions: 'الحد الأقصى للأسئلة',
+                processingResults: 'جاري معالجة النتائج...',
+                calculatingScore: 'حساب النتيجة'
             }
         };
         this.letterCounts = {};
@@ -1586,6 +1590,9 @@ class VocabMasterApp {
     }
 
     async finishTest() {
+        // Show loading indicator
+        this.showTestProcessingLoader();
+        
         const correct = this.currentTest.answers.filter(a => a.correct).length;
         const total = this.currentTest.answers.length;
         const percentage = Math.round((correct / total) * 100);
@@ -1618,8 +1625,31 @@ class VocabMasterApp {
         // Recalculate stats with new data
         this.calculateStats();
         
+        // Small delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
         this.showTestResults(correct, total, percentage);
         this.currentTest = null;
+    }
+    
+    showTestProcessingLoader() {
+        const pageContent = document.getElementById('pageContent');
+        pageContent.innerHTML = `
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-12 text-center border border-blue-200 shadow-lg">
+                    <div class="w-16 h-16 mx-auto mb-6">
+                        <div class="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-3">${this.t('processingResults')}</h3>
+                    <p class="text-slate-600 mb-6">${this.t('calculatingScore')}</p>
+                    <div class="flex justify-center items-center gap-2">
+                        <div class="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                        <div class="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                        <div class="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
     showTestResults(correct, total, percentage) {

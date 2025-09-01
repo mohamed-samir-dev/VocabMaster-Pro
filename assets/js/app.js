@@ -135,7 +135,9 @@ class VocabMasterApp {
                 viewChallenge: 'Start Challenge',
                 learnMore: 'Learn More',
                 welcomeTitle: 'Welcome to VocabMaster Pro',
-                getStarted: 'Get Started'
+                getStarted: 'Get Started',
+                studiedTodayInfo: 'Updates after completing tests',
+                streakInfo: 'Updates after taking tests'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -206,7 +208,9 @@ class VocabMasterApp {
                 viewChallenge: 'بدء التحدي',
                 learnMore: 'تعلم المزيد',
                 welcomeTitle: 'مرحباً بك في ماستر المفردات برو',
-                getStarted: 'ابدأ الآن'
+                getStarted: 'ابدأ الآن',
+                studiedTodayInfo: 'يتحدث بعد إكمال الاختبارات',
+                streakInfo: 'يتحدث بعد إجراء الاختبارات'
             }
         };
         this.init();
@@ -415,6 +419,7 @@ class VocabMasterApp {
         const studiedWords = this.words.filter(word => word.lastStudied);
         if (studiedWords.length === 0) return 0;
         
+        // Get unique study dates and sort them in descending order (most recent first)
         const studyDates = [...new Set(studiedWords
             .map(word => new Date(word.lastStudied).toDateString())
         )].sort((a, b) => new Date(b) - new Date(a));
@@ -423,15 +428,26 @@ class VocabMasterApp {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
-        for (let i = 0; i < studyDates.length; i++) {
-            const studyDate = new Date(studyDates[i]);
+        // Check if user studied today or yesterday to start counting streak
+        const mostRecentStudyDate = new Date(studyDates[0]);
+        mostRecentStudyDate.setHours(0, 0, 0, 0);
+        const daysSinceLastStudy = Math.floor((today - mostRecentStudyDate) / (1000 * 60 * 60 * 24));
+        
+        // If last study was more than 1 day ago, streak is broken
+        if (daysSinceLastStudy > 1) return 0;
+        
+        // Count consecutive days starting from the most recent
+        let expectedDate = new Date(mostRecentStudyDate);
+        
+        for (const dateString of studyDates) {
+            const studyDate = new Date(dateString);
             studyDate.setHours(0, 0, 0, 0);
-            const daysDiff = Math.floor((today - studyDate) / (1000 * 60 * 60 * 24));
             
-            if (daysDiff === i) {
+            if (studyDate.getTime() === expectedDate.getTime()) {
                 streak++;
+                expectedDate.setDate(expectedDate.getDate() - 1); // Move to previous day
             } else {
-                break;
+                break; // Gap found, streak ends
             }
         }
         
@@ -637,6 +653,10 @@ class VocabMasterApp {
                         </div>
                     </div>
                     <div class="text-3xl font-bold text-slate-800 mb-2">${this.stats.studiedToday}</div>
+                    <div class="flex items-center gap-1 text-xs text-slate-400">
+                        <i class="fas fa-info-circle"></i>
+                        <span>${this.t('studiedTodayInfo')}</span>
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm">
@@ -657,6 +677,10 @@ class VocabMasterApp {
                         </div>
                     </div>
                     <div class="text-3xl font-bold text-slate-800 mb-2">${this.stats.streak}</div>
+                    <div class="flex items-center gap-1 text-xs text-slate-400">
+                        <i class="fas fa-info-circle"></i>
+                        <span>${this.t('streakInfo')}</span>
+                    </div>
                 </div>
             </div>
             

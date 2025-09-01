@@ -953,7 +953,7 @@ class VocabMasterApp {
                     ${this.t('addWord')}
                 </button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="vocabularyGrid">
+            <div id="vocabularyGrid">
                 ${this.renderWordCards()}
             </div>
             
@@ -1011,21 +1011,52 @@ class VocabMasterApp {
             return `<div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm col-span-full text-center"><p class="text-slate-500">${this.t('emptyCollection')}</p></div>`;
         }
         
-        return this.words.map(word => `
-            <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="flex-1">
-                        <div class="text-xl font-semibold text-slate-800 mb-1">${word.english}</div>
-                        <div class="text-base text-slate-600">${word.arabic}</div>
+        // Group words by first letter
+        const wordsByLetter = {};
+        this.words.forEach(word => {
+            const letter = word.english.charAt(0).toUpperCase();
+            if (!wordsByLetter[letter]) wordsByLetter[letter] = [];
+            wordsByLetter[letter].push(word);
+        });
+        
+        // Sort letters and render sections
+        const sortedLetters = Object.keys(wordsByLetter).sort();
+        
+        return sortedLetters.map(letter => {
+            const wordsForLetter = wordsByLetter[letter];
+            return `
+                <div class="letter-section mb-8" id="letter-${letter}">
+                    <div class="letter-header rounded-lg p-4 mb-4 text-white">
+                        <div class="flex items-center gap-4">
+                            <div class="letter-badge w-12 h-12 rounded-full flex items-center justify-center">
+                                <span class="text-xl font-bold text-blue-600">${letter}</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold">${this.t('wordsStartingWith')} "${letter}"</h3>
+                                <p class="text-blue-100 text-sm">${wordsForLetter.length} ${wordsForLetter.length === 1 ? this.t('word') : this.t('words')}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex gap-2">
-                        <button class="w-9 h-9 border-0 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-red-500 hover:text-white" onclick="app.showDeleteConfirmModal('${word.id}', '${word.english}', '${word.arabic}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        ${wordsForLetter.map(word => `
+                            <div class="bg-white rounded-lg p-6 border border-slate-200 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="flex-1">
+                                        <div class="text-xl font-semibold text-slate-800 mb-1">${word.english}</div>
+                                        <div class="text-base text-slate-600">${word.arabic}</div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="w-9 h-9 border-0 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-red-500 hover:text-white" onclick="app.showDeleteConfirmModal('${word.id}', '${word.english}', '${word.arabic}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     setupVocabularyEvents() {

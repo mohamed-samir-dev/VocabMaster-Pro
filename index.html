@@ -1,9 +1,72 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VocabMaster - English Learning</title>
+
+    <!-- SEO Meta Tags -->
+    <title>VocabMaster Pro - Professional English Vocabulary Learning App | تطبيق تعلم المفردات الإنجليزية</title>
+    <meta name="description"
+        content="Master English vocabulary with VocabMaster Pro. Interactive quizzes, progress tracking, and smart learning system. Perfect for Arabic speakers learning English. | تعلم المفردات الإنجليزية بذكاء مع نظام التتبع والاختبارات التفاعلية">
+    <meta name="keywords"
+        content="English vocabulary, Arabic to English, vocabulary app, English learning, تعلم الإنجليزية, مفردات إنجليزية, تطبيق تعلم اللغة">
+    <meta name="author" content="VocabMaster Pro">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://vocabmaster-pro.com">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="VocabMaster Pro - Professional English Vocabulary Learning">
+    <meta property="og:description"
+        content="Interactive English vocabulary learning app with quizzes, progress tracking, and smart learning system for Arabic speakers.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://vocabmaster-pro.com">
+    <meta property="og:image" content="assets/images//graduation-cap-solid-full.svg">
+    <meta property="og:site_name" content="VocabMaster Pro">
+    <meta property="og:locale" content="ar_SA">
+    <meta property="og:locale:alternate" content="en_US">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="VocabMaster Pro - English Vocabulary Learning">
+    <meta name="twitter:description"
+        content="Master English vocabulary with interactive quizzes and smart learning system.">
+    <meta name="twitter:image" content="assets/images//graduation-cap-solid-full.svg">
+
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/x-icon" href="assets/images/android-chrome-512x512.png">
+    <link rel=" apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "VocabMaster Pro",
+      "description": "Professional English vocabulary learning application with interactive quizzes and progress tracking",
+      "url": "https://vocabmaster-pro.com",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "VocabMaster Pro"
+      },
+      "inLanguage": ["ar", "en"]
+    }
+    </script>
+
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- CSS Resources -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -19,43 +82,48 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
+
         /* Mobile-first sidebar */
-        .sidebar-slide { 
-            transform: translateX(-100%); 
+        .sidebar-slide {
+            transform: translateX(-100%);
             width: 280px;
         }
-        .sidebar-slide.open { 
-            transform: translateX(0); 
+
+        .sidebar-slide.open {
+            transform: translateX(0);
         }
-        
+
         /* RTL support */
-        [dir="rtl"] .sidebar-slide { 
-            transform: translateX(100%); 
-            right: 0; 
-            left: auto; 
-            border-right: 1px solid #e2e8f0; 
-            border-left: none; 
+        [dir="rtl"] .sidebar-slide {
+            transform: translateX(100%);
+            right: 0;
+            left: auto;
+            border-right: 1px solid #e2e8f0;
+            border-left: none;
         }
-        [dir="rtl"] .sidebar-slide.open { 
-            transform: translateX(0); 
+
+        [dir="rtl"] .sidebar-slide.open {
+            transform: translateX(0);
         }
-        [dir="rtl"] .nav-item.active { 
-            border-right: none; 
-            border-left: 2px solid #2563eb; 
+
+        [dir="rtl"] .nav-item.active {
+            border-right: none;
+            border-left: 2px solid #2563eb;
         }
-        
+
         /* Desktop styles */
         @media (min-width: 768px) {
-            .sidebar-slide { 
-                transform: translateX(0); 
-                width: 288px; /* w-72 = 18rem = 288px */
+            .sidebar-slide {
+                transform: translateX(0);
+                width: 288px;
+                /* w-72 = 18rem = 288px */
             }
-            [dir="rtl"] .sidebar-slide { 
-                transform: translateX(0); 
+
+            [dir="rtl"] .sidebar-slide {
+                transform: translateX(0);
             }
         }
-        
+
         /* Mobile overlay */
         @media (max-width: 767px) {
             .sidebar-slide::before {
@@ -70,26 +138,32 @@
                 transition: opacity 0.3s;
                 pointer-events: none;
             }
+
             .sidebar-slide.open::before {
                 opacity: 1;
                 pointer-events: auto;
             }
         }
-        
+
         /* Welcome modal animations */
-        #welcomeIcon, #welcomeTitle, #welcomeDescription, #welcomeSubtitle {
+        #welcomeIcon,
+        #welcomeTitle,
+        #welcomeDescription,
+        #welcomeSubtitle {
             transition: opacity 0.3s ease-in-out;
         }
-        
+
         #welcomeModal .bg-white {
             transition: transform 0.3s ease-out;
         }
     </style>
 </head>
+
 <body class="font-inter bg-slate-50 text-slate-800">
     <div class="flex min-h-screen">
         <!-- Sidebar Navigation -->
-        <nav class="sidebar-slide bg-white border-r border-slate-200 shadow-lg md:shadow-sm fixed h-screen overflow-y-auto z-50 transition-transform duration-300 md:translate-x-0">
+        <nav
+            class="sidebar-slide bg-white border-r border-slate-200 shadow-lg md:shadow-sm fixed h-screen overflow-y-auto z-50 transition-transform duration-300 md:translate-x-0">
             <div class="p-4 md:p-6 border-b border-slate-200">
                 <div class="flex items-center gap-2 md:gap-3 text-lg md:text-xl font-bold text-blue-600">
                     <i class="fas fa-graduation-cap text-xl md:text-2xl"></i>
@@ -97,19 +171,23 @@
                 </div>
             </div>
             <ul class="py-4">
-                <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600 bg-blue-50 text-blue-600 border-r-2 border-blue-600" data-page="dashboard">
+                <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600 bg-blue-50 text-blue-600 border-r-2 border-blue-600"
+                    data-page="dashboard">
                     <i class="fas fa-chart-line w-5 text-center"></i>
                     <span>لوحة التحكم</span>
                 </li>
-                <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600" data-page="vocabulary">
+                <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600"
+                    data-page="vocabulary">
                     <i class="fas fa-book w-5 text-center"></i>
                     <span>المفردات</span>
                 </li>
-                <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600" data-page="test">
+                <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600"
+                    data-page="test">
                     <i class="fas fa-brain w-5 text-center"></i>
                     <span>الاختبار</span>
                 </li>
-                <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600" data-page="search">
+                <li class="nav-item flex items-center gap-3 px-6 py-3 cursor-pointer transition-all duration-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-blue-600"
+                    data-page="search">
                     <i class="fas fa-search w-5 text-center"></i>
                     <span>البحث</span>
                 </li>
@@ -118,19 +196,25 @@
 
         <!-- Main Content -->
         <main class="flex-1 md:mr-72 flex flex-col" id="mainContent">
-            <header class="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center shadow-sm sticky top-0 z-40">
+            <header
+                class="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center shadow-sm sticky top-0 z-40">
                 <div class="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
-                    <button class="sidebar-toggle md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg text-xl flex-shrink-0">
+                    <button
+                        class="sidebar-toggle md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg text-xl flex-shrink-0">
                         <i class="fas fa-bars"></i>
                     </button>
                     <h1 class="page-title text-lg md:text-2xl font-semibold text-slate-800 truncate">لوحة التحكم</h1>
                 </div>
                 <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
-                    <button class="inline-flex items-center gap-1 md:gap-2 px-2 md:px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs md:text-sm font-medium hover:bg-slate-200 transition-all duration-200" onclick="app.toggleLanguage()" id="langToggle">
+                    <button
+                        class="inline-flex items-center gap-1 md:gap-2 px-2 md:px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs md:text-sm font-medium hover:bg-slate-200 transition-all duration-200"
+                        onclick="app.toggleLanguage()" id="langToggle">
                         <i class="fas fa-language"></i>
                         <span id="langText" class="hidden sm:inline">English</span>
                     </button>
-                    <button class="inline-flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 md:py-3 bg-blue-600 text-white rounded-lg text-xs md:text-sm font-medium hover:bg-blue-700 transition-all duration-200" onclick="app.navigateTo('search')">
+                    <button
+                        class="inline-flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 md:py-3 bg-blue-600 text-white rounded-lg text-xs md:text-sm font-medium hover:bg-blue-700 transition-all duration-200"
+                        onclick="app.navigateTo('search')">
                         <i class="fas fa-search"></i>
                         <span id="searchBtnText" class="hidden sm:inline">البحث</span>
                     </button>
@@ -144,16 +228,20 @@
     </div>
 
     <!-- Loading Overlay -->
-    <div class="fixed inset-0 bg-white bg-opacity-90 flex flex-col justify-center items-center z-50 opacity-0 invisible transition-all duration-300" id="loadingOverlay">
+    <div class="fixed inset-0 bg-white bg-opacity-90 flex flex-col justify-center items-center z-50 opacity-0 invisible transition-all duration-300"
+        id="loadingOverlay">
         <div class="w-10 h-10 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
         <p class="text-slate-600">Loading...</p>
     </div>
 
     <!-- Welcome Modal -->
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300" id="welcomeModal">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transform scale-95 transition-transform duration-300">
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300"
+        id="welcomeModal">
+        <div
+            class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transform scale-95 transition-transform duration-300">
             <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white text-center">
-                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div
+                    class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-graduation-cap text-2xl"></i>
                 </div>
                 <h2 class="text-2xl font-bold mb-2" id="welcomeModalTitle">مرحباً بك في ماستر المفردات برو</h2>
@@ -163,7 +251,8 @@
                 <div class="text-center mb-6">
                     <div class="text-4xl mb-3" id="welcomeIcon">📚</div>
                     <h3 class="text-lg font-semibold text-slate-800 mb-2" id="welcomeTitle">تعلم المفردات الذكي</h3>
-                    <p class="text-slate-600 text-sm" id="welcomeDescription">ابني مفرداتك الإنجليزية مع نظام التعلم الذكي</p>
+                    <p class="text-slate-600 text-sm" id="welcomeDescription">ابني مفرداتك الإنجليزية مع نظام التعلم
+                        الذكي</p>
                 </div>
                 <div class="space-y-3 mb-6">
                     <div class="flex items-center gap-3 text-sm text-slate-600">
@@ -179,7 +268,9 @@
                         <span>تجربة تعلم شخصية</span>
                     </div>
                 </div>
-                <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200" onclick="app.closeWelcomeModal()" id="getStartedBtn">
+                <button
+                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
+                    onclick="app.closeWelcomeModal()" id="getStartedBtn">
                     ابدأ الآن
                 </button>
             </div>
@@ -193,4 +284,5 @@
     <script type="module" src="config/firebase.js"></script>
     <script type="module" src="assets/js/app.js"></script>
 </body>
+
 </html>

@@ -239,12 +239,23 @@ class VocabMasterApp {
     }
 
     setInitialLanguage() {
-        document.documentElement.lang = 'ar';
-        document.documentElement.dir = 'rtl';
-        document.getElementById('langText').textContent = 'English';
+        // Check localStorage for saved language preference, default to Arabic
+        const savedLang = localStorage.getItem('vocabmaster_language') || 'ar';
+        this.currentLang = savedLang;
+        
+        document.documentElement.lang = this.currentLang;
+        document.documentElement.dir = this.currentLang === 'ar' ? 'rtl' : 'ltr';
+        document.getElementById('langText').textContent = this.currentLang === 'ar' ? 'English' : 'العربية';
+        
         const mainContent = document.getElementById('mainContent');
-        mainContent.classList.remove('md:ml-72');
-        mainContent.classList.add('md:mr-72');
+        if (this.currentLang === 'ar') {
+            mainContent.classList.remove('md:ml-72');
+            mainContent.classList.add('md:mr-72');
+        } else {
+            mainContent.classList.remove('md:mr-72');
+            mainContent.classList.add('md:ml-72');
+        }
+        
         this.updateNavigation();
     }
 
@@ -628,6 +639,10 @@ class VocabMasterApp {
 
     toggleLanguage() {
         this.currentLang = this.currentLang === 'en' ? 'ar' : 'en';
+        
+        // Save language preference to localStorage
+        localStorage.setItem('vocabmaster_language', this.currentLang);
+        
         document.documentElement.lang = this.currentLang;
         document.documentElement.dir = this.currentLang === 'ar' ? 'rtl' : 'ltr';
         document.getElementById('langText').textContent = this.currentLang === 'en' ? 'العربية' : 'English';

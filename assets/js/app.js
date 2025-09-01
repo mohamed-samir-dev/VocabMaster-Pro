@@ -169,7 +169,9 @@ class VocabMasterApp {
                 question: 'Question',
                 maxQuestions: 'Max Questions',
                 processingResults: 'Processing Results...',
-                calculatingScore: 'Calculating Score'
+                calculatingScore: 'Calculating Score',
+                editWord: 'Edit Word',
+                updateWord: 'Update Word'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -274,7 +276,9 @@ class VocabMasterApp {
                 question: 'السؤال',
                 maxQuestions: 'الحد الأقصى للأسئلة',
                 processingResults: 'جاري معالجة النتائج...',
-                calculatingScore: 'حساب النتيجة'
+                calculatingScore: 'حساب النتيجة',
+                editWord: 'تعديل الكلمة',
+                updateWord: 'تحديث الكلمة'
             }
         };
         this.letterCounts = {};
@@ -1004,6 +1008,27 @@ class VocabMasterApp {
                 </div>
             </div>
             
+            <!-- Edit Word Modal -->
+            <div id="editWordModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
+                <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-4">${this.t('editWord')}</h3>
+                    <form id="editWordForm">
+                        <div class="mb-4">
+                            <label class="block text-slate-700 text-sm font-medium mb-2">${this.t('englishWord')}</label>
+                            <input type="text" id="editEnglishInput" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-slate-700 text-sm font-medium mb-2">${this.t('arabicTranslation')}</label>
+                            <input type="text" id="editArabicInput" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="button" onclick="app.hideEditWordModal()" class="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors">${this.t('cancel')}</button>
+                            <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">${this.t('updateWord')}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
             <!-- Delete Confirmation Modal -->
             <div id="deleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
                 <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
@@ -1072,6 +1097,9 @@ class VocabMasterApp {
                                         <div class="text-base text-slate-600">${word.arabic}</div>
                                     </div>
                                     <div class="flex gap-2">
+                                        <button class="w-9 h-9 border-0 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-blue-500 hover:text-white" onclick="app.showEditWordModal('${word.id}', '${word.english}', '${word.arabic}')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
                                         <button class="w-9 h-9 border-0 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-red-500 hover:text-white" onclick="app.showDeleteConfirmModal('${word.id}', '${word.english}', '${word.arabic}')">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -1100,6 +1128,19 @@ class VocabMasterApp {
                 if (english && arabic) {
                     this.addWord(english, arabic);
                     this.hideAddWordModal();
+                }
+            });
+        }
+        
+        const editForm = document.getElementById('editWordForm');
+        if (editForm) {
+            editForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const english = document.getElementById('editEnglishInput').value.trim();
+                const arabic = document.getElementById('editArabicInput').value.trim();
+                if (english && arabic) {
+                    this.updateWord(this.wordToEdit, english, arabic);
+                    this.hideEditWordModal();
                 }
             });
         }
@@ -1139,6 +1180,60 @@ class VocabMasterApp {
         if (this.wordToDelete) {
             this.deleteWord(this.wordToDelete);
             this.hideDeleteConfirmModal();
+        }
+    }
+    
+    showEditWordModal(wordId, english, arabic) {
+        this.wordToEdit = wordId;
+        document.getElementById('editEnglishInput').value = english;
+        document.getElementById('editArabicInput').value = arabic;
+        const modal = document.getElementById('editWordModal');
+        modal.classList.remove('opacity-0', 'invisible');
+        modal.classList.add('opacity-100', 'visible');
+        document.getElementById('editEnglishInput').focus();
+    }
+    
+    hideEditWordModal() {
+        const modal = document.getElementById('editWordModal');
+        modal.classList.remove('opacity-100', 'visible');
+        modal.classList.add('opacity-0', 'invisible');
+        document.getElementById('editWordForm').reset();
+        this.wordToEdit = null;
+    }
+    
+    async updateWord(wordId, english, arabic) {
+        if (!english || !arabic || !english.trim() || !arabic.trim()) {
+            this.showToast('Please provide both English word and Arabic translation.', 'error');
+            return;
+        }
+        
+        const duplicate = this.words.find(word => 
+            word.english.toLowerCase() === english.toLowerCase().trim() && word.id !== wordId
+        );
+        if (duplicate) {
+            this.showToast('This English word already exists in your vocabulary.', 'error');
+            return;
+        }
+        
+        try {
+            await firebase.updateDoc(firebase.doc(firebase.db, 'words', wordId), {
+                english: english.trim(),
+                arabic: arabic.trim()
+            });
+            
+            const wordIndex = this.words.findIndex(w => w.id === wordId);
+            if (wordIndex !== -1) {
+                this.words[wordIndex].english = english.trim();
+                this.words[wordIndex].arabic = arabic.trim();
+            }
+            
+            this.calculateStats();
+            this.calculateLetterStats();
+            this.updateLetterStats();
+            this.renderCurrentPage();
+            this.showToast('Word updated successfully.', 'success');
+        } catch (error) {
+            this.showToast('Unable to update word. Please try again.', 'error');
         }
     }
 

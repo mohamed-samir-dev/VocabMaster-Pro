@@ -171,7 +171,9 @@ class VocabMasterApp {
                 processingResults: 'Processing Results...',
                 calculatingScore: 'Calculating Score',
                 editWord: 'Edit Word',
-                updateWord: 'Update Word'
+                updateWord: 'Update Word',
+                wordUpdatedSuccess: 'Word updated successfully',
+                wordAddedSuccess: 'Vocabulary word added successfully to your collection'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -278,7 +280,9 @@ class VocabMasterApp {
                 processingResults: 'جاري معالجة النتائج...',
                 calculatingScore: 'حساب النتيجة',
                 editWord: 'تعديل الكلمة',
-                updateWord: 'تحديث الكلمة'
+                updateWord: 'تحديث الكلمة',
+                wordUpdatedSuccess: 'تم تحديث الكلمة بنجاح',
+                wordAddedSuccess: 'تمت إضافة الكلمة بنجاح إلى مجموعتك'
             }
         };
         this.letterCounts = {};
@@ -1231,7 +1235,7 @@ class VocabMasterApp {
             this.calculateLetterStats();
             this.updateLetterStats();
             this.renderCurrentPage();
-            this.showToast('Word updated successfully.', 'success');
+            this.showToast(this.t('wordUpdatedSuccess'), 'success');
         } catch (error) {
             this.showToast('Unable to update word. Please try again.', 'error');
         }
@@ -1583,7 +1587,7 @@ class VocabMasterApp {
             this.calculateLetterStats();
             this.updateLetterStats();
             this.renderCurrentPage();
-            this.showToast('Vocabulary word added successfully to your collection.', 'success');
+            this.showToast(this.t('wordAddedSuccess'), 'success');
         } catch (error) {
             this.showToast('Unable to add word. Please try again.', 'error');
         }

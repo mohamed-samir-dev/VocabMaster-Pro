@@ -13,14 +13,14 @@
         content="English vocabulary, Arabic to English, vocabulary app, English learning, تعلم الإنجليزية, مفردات إنجليزية, تطبيق تعلم اللغة">
     <meta name="author" content="VocabMaster Pro">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://vocabmaster-pro.com">
+    <link rel="canonical" href="https://vocab-master-pro-six.vercel.app/">
 
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="VocabMaster Pro - Professional English Vocabulary Learning">
     <meta property="og:description"
         content="Interactive English vocabulary learning app with quizzes, progress tracking, and smart learning system for Arabic speakers.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://vocabmaster-pro.com">
+    <meta property="og:url" content="https://vocab-master-pro-six.vercel.app/">
     <meta property="og:image" content="assets/images//graduation-cap-solid-full.svg">
     <meta property="og:site_name" content="VocabMaster Pro">
     <meta property="og:locale" content="ar_SA">
@@ -47,7 +47,7 @@
       "@type": "WebApplication",
       "name": "VocabMaster Pro",
       "description": "Professional English vocabulary learning application with interactive quizzes and progress tracking",
-      "url": "https://vocabmaster-pro.com",
+      "url": "https://vocab-master-pro-six.vercel.app/",
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "Web Browser",
       "offers": {
@@ -274,6 +274,46 @@
                     class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
                     onclick="app.closeWelcomeModal()" id="getStartedBtn">
                     ابدأ الآن
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Developer Notice Modal -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300"
+        id="developerNoticeModal">
+        <div
+            class="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="bg-gradient-to-r from-slate-700 to-slate-900 p-6 text-white text-center">
+                <div
+                    class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-code text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold mb-2" id="developerNoticeTitle">إشعار المطور</h2>
+            </div>
+            <div class="p-6">
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-3">👨‍💻</div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4" id="noticeTitle">موقع المطور الشخصي</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" id="noticeDescription">
+                        هذا الموقع مخصص للمطور فقط. جميع الإحصائيات والبيانات المعروضة هنا شخصية وخاصة بالمطور.
+                        يُستخدم هذا التطبيق لأغراض التطوير والاختبار الشخصي.
+                    </p>
+                </div>
+                <div class="bg-slate-50 rounded-lg p-4 mb-6">
+                    <div class="flex items-center gap-3 text-sm text-slate-600 mb-2">
+                        <i class="fas fa-shield-alt text-blue-600"></i>
+                        <span id="privacyNote">البيانات محمية وشخصية</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-slate-600">
+                        <i class="fas fa-cog text-green-600"></i>
+                        <span id="developmentNote">بيئة تطوير واختبار</span>
+                    </div>
+                </div>
+                <button
+                    class="w-full bg-gradient-to-r from-slate-700 to-slate-900 text-white py-3 rounded-lg font-medium hover:from-slate-800 hover:to-black transition-all duration-200"
+                    onclick="app.closeDeveloperNoticeModal()" id="understoodBtn">
+                    فهمت
                 </button>
             </div>
         </div>

@@ -137,7 +137,13 @@ class VocabMasterApp {
                 welcomeTitle: 'Welcome to VocabMaster Pro',
                 getStarted: 'Get Started',
                 studiedTodayInfo: 'Updates after completing tests',
-                streakInfo: 'Updates after taking tests'
+                streakInfo: 'Updates after taking tests',
+                developerNoticeTitle: 'Developer Notice',
+                noticeTitle: 'Personal Developer Site',
+                noticeDescription: 'This site is exclusively for the developer. All statistics and data displayed here are personal and private to the developer. This application is used for development and personal testing purposes.',
+                privacyNote: 'Data is protected and private',
+                developmentNote: 'Development and testing environment',
+                understoodBtn: 'Understood'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -210,7 +216,13 @@ class VocabMasterApp {
                 welcomeTitle: 'مرحباً بك في ماستر المفردات برو',
                 getStarted: 'ابدأ الآن',
                 studiedTodayInfo: 'يتحدث بعد إكمال الاختبارات',
-                streakInfo: 'يتحدث بعد إجراء الاختبارات'
+                streakInfo: 'يتحدث بعد إجراء الاختبارات',
+                developerNoticeTitle: 'إشعار المطور',
+                noticeTitle: 'موقع المطور الشخصي',
+                noticeDescription: 'هذا الموقع مخصص للمطور فقط. جميع الإحصائيات والبيانات المعروضة هنا شخصية وخاصة بالمطور. يُستخدم هذا التطبيق لأغراض التطوير والاختبار الشخصي.',
+                privacyNote: 'البيانات محمية وشخصية',
+                developmentNote: 'بيئة تطوير واختبار',
+                understoodBtn: 'فهمت'
             }
         };
         this.init();
@@ -344,6 +356,44 @@ class VocabMasterApp {
         }
         
         localStorage.setItem('vocabmaster_visited', 'true');
+        
+        // Show developer notice modal after welcome modal
+        setTimeout(() => this.showDeveloperNoticeModal(), 500);
+    }
+
+    showDeveloperNoticeModal() {
+        const modal = document.getElementById('developerNoticeModal');
+        modal.classList.remove('opacity-0', 'invisible');
+        modal.classList.add('opacity-100', 'visible');
+        modal.querySelector('.bg-white').classList.remove('scale-95');
+        modal.querySelector('.bg-white').classList.add('scale-100');
+        
+        this.updateDeveloperNoticeLanguage();
+    }
+
+    closeDeveloperNoticeModal() {
+        const modal = document.getElementById('developerNoticeModal');
+        modal.classList.remove('opacity-100', 'visible');
+        modal.classList.add('opacity-0', 'invisible');
+        modal.querySelector('.bg-white').classList.remove('scale-100');
+        modal.querySelector('.bg-white').classList.add('scale-95');
+    }
+
+    updateDeveloperNoticeLanguage() {
+        const elements = {
+            developerNoticeTitle: document.getElementById('developerNoticeTitle'),
+            noticeTitle: document.getElementById('noticeTitle'),
+            noticeDescription: document.getElementById('noticeDescription'),
+            privacyNote: document.getElementById('privacyNote'),
+            developmentNote: document.getElementById('developmentNote'),
+            understoodBtn: document.getElementById('understoodBtn')
+        };
+        
+        Object.keys(elements).forEach(key => {
+            if (elements[key]) {
+                elements[key].textContent = this.t(key);
+            }
+        });
     }
 
     updateWelcomeModalLanguage() {
@@ -594,6 +644,7 @@ class VocabMasterApp {
         
         this.updateNavigation();
         this.updateWelcomeModalLanguage();
+        this.updateDeveloperNoticeLanguage();
         this.navigateTo(this.currentPage);
     }
 

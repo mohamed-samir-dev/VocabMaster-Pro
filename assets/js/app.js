@@ -143,7 +143,15 @@ class VocabMasterApp {
                 noticeDescription: 'This site is exclusively for the developer. All statistics and data displayed here are personal and private to the developer. This application is used for development and personal testing purposes.',
                 privacyNote: 'Data is protected and private',
                 developmentNote: 'Development and testing environment',
-                understoodBtn: 'Understood'
+                understoodBtn: 'Understood',
+                about: 'About',
+                aboutTitle: 'About VocabMaster Pro',
+                aboutDescription: 'A professional English vocabulary learning application designed to help Arabic speakers master English vocabulary through interactive quizzes and smart learning techniques.',
+                features: 'Features',
+                techStack: 'Technology Stack',
+                developer: 'Developer',
+                version: 'Version',
+                contact: 'Contact'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -222,7 +230,15 @@ class VocabMasterApp {
                 noticeDescription: 'هذا الموقع مخصص للمطور فقط. جميع الإحصائيات والبيانات المعروضة هنا شخصية وخاصة بالمطور. يُستخدم هذا التطبيق لأغراض التطوير والاختبار الشخصي.',
                 privacyNote: 'البيانات محمية وشخصية',
                 developmentNote: 'بيئة تطوير واختبار',
-                understoodBtn: 'فهمت'
+                understoodBtn: 'فهمت',
+                about: 'حول',
+                aboutTitle: 'حول ماستر المفردات برو',
+                aboutDescription: 'تطبيق احترافي لتعلم المفردات الإنجليزية مصمم لمساعدة المتحدثين بالعربية على إتقان المفردات الإنجليزية من خلال الاختبارات التفاعلية وتقنيات التعلم الذكية.',
+                features: 'الميزات',
+                techStack: 'التقنيات المستخدمة',
+                developer: 'المطور',
+                version: 'الإصدار',
+                contact: 'التواصل'
             }
         };
         this.init();
@@ -665,7 +681,7 @@ class VocabMasterApp {
 
     updateNavigation() {
         document.querySelectorAll('.nav-item span').forEach((span, index) => {
-            const pages = ['dashboard', 'vocabulary', 'test', 'search'];
+            const pages = ['dashboard', 'vocabulary', 'test', 'search', 'about'];
             span.textContent = this.t(pages[index]);
         });
         document.querySelector('.page-title').textContent = this.getPageTitle(this.currentPage);
@@ -691,6 +707,9 @@ class VocabMasterApp {
             case 'search':
                 pageContent.innerHTML = this.renderSearch();
                 this.setupSearchEvents();
+                break;
+            case 'about':
+                pageContent.innerHTML = this.renderAbout();
                 break;
             default:
                 pageContent.innerHTML = this.renderDashboard();
@@ -1109,6 +1128,185 @@ class VocabMasterApp {
                 <div class="text-base text-slate-600">${word.arabic}</div>
             </div>
         `).join('');
+    }
+
+    renderAbout() {
+        return `
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <div class="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-graduation-cap text-3xl text-white"></i>
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">${this.t('aboutTitle')}</h1>
+                    <p class="text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto">${this.t('aboutDescription')}</p>
+                </div>
+
+                <!-- Developer Notice Section -->
+                <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6 mb-12">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-white text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-xl font-semibold text-amber-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-code text-amber-600"></i>
+                                ${this.currentLang === 'ar' ? 'إشعار هام' : 'Important Notice'}
+                            </h2>
+                            <div class="bg-white bg-opacity-60 rounded-lg p-4 mb-4">
+                                <p class="text-amber-800 font-medium mb-2">
+                                    ${this.currentLang === 'ar' ? 'موقع المطور الشخصي' : 'Personal Developer Site'}
+                                </p>
+                                <p class="text-amber-700 text-sm leading-relaxed">
+                                    ${this.currentLang === 'ar' ? 
+                                        'هذا الموقع مخصص للمطور فقط. جميع الإحصائيات والبيانات المعروضة هنا شخصية وخاصة بالمطور. يُستخدم هذا التطبيق لأغراض التطوير والاختبار الشخصي.' : 
+                                        'This site is exclusively for the developer. All statistics and data displayed here are personal and private to the developer. This application is used for development and personal testing purposes.'
+                                    }
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="flex items-center gap-3 text-sm text-amber-700">
+                                    <i class="fas fa-shield-alt text-amber-600"></i>
+                                    <span>${this.currentLang === 'ar' ? 'البيانات محمية وشخصية' : 'Data is protected and private'}</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-sm text-amber-700">
+                                    <i class="fas fa-cog text-amber-600"></i>
+                                    <span>${this.currentLang === 'ar' ? 'بيئة تطوير واختبار' : 'Development and testing environment'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                    <!-- Features Section -->
+                    <div class="bg-white rounded-xl p-8 border border-slate-200 shadow-sm">
+                        <h2 class="text-2xl font-semibold text-slate-800 mb-6 flex items-center gap-3">
+                            <i class="fas fa-star text-yellow-500"></i>
+                            ${this.t('features')}
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <div>
+                                    <h3 class="font-medium text-slate-800">${this.currentLang === 'ar' ? 'اختبارات تفاعلية' : 'Interactive Quizzes'}</h3>
+                                    <p class="text-sm text-slate-600">${this.currentLang === 'ar' ? 'اختبارات ذكية مع تتبع التقدم' : 'Smart quizzes with progress tracking'}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <div>
+                                    <h3 class="font-medium text-slate-800">${this.currentLang === 'ar' ? 'إحصائيات شاملة' : 'Comprehensive Statistics'}</h3>
+                                    <p class="text-sm text-slate-600">${this.currentLang === 'ar' ? 'تتبع دقيق للأداء والتقدم' : 'Detailed performance and progress tracking'}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <div>
+                                    <h3 class="font-medium text-slate-800">${this.currentLang === 'ar' ? 'واجهة ثنائية اللغة' : 'Bilingual Interface'}</h3>
+                                    <p class="text-sm text-slate-600">${this.currentLang === 'ar' ? 'دعم كامل للعربية والإنجليزية' : 'Full Arabic and English support'}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <div>
+                                    <h3 class="font-medium text-slate-800">${this.currentLang === 'ar' ? 'تصميم متجاوب' : 'Responsive Design'}</h3>
+                                    <p class="text-sm text-slate-600">${this.currentLang === 'ar' ? 'يعمل على جميع الأجهزة' : 'Works on all devices'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tech Stack Section -->
+                    <div class="bg-white rounded-xl p-8 border border-slate-200 shadow-sm">
+                        <h2 class="text-2xl font-semibold text-slate-800 mb-6 flex items-center gap-3">
+                            <i class="fas fa-code text-blue-500"></i>
+                            ${this.t('techStack')}
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                                <i class="fab fa-html5 text-orange-500 text-xl"></i>
+                                <span class="font-medium">HTML5 & CSS3</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                                <i class="fab fa-js-square text-yellow-500 text-xl"></i>
+                                <span class="font-medium">JavaScript ES6+</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                                <i class="fas fa-fire text-red-500 text-xl"></i>
+                                <span class="font-medium">Firebase Firestore</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                                <i class="fas fa-wind text-cyan-500 text-xl"></i>
+                                <span class="font-medium">Tailwind CSS</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                                <i class="fas fa-icons text-purple-500 text-xl"></i>
+                                <span class="font-medium">Font Awesome</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Developer Info -->
+                <div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl p-8 text-white">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-user-tie text-2xl text-white"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-2">Mohamed Samir Mowad</h2>
+                        <p class="text-slate-300 mb-1">${this.currentLang === 'ar' ? 'مطور ويب محترف' : 'Professional Web Developer'}</p>
+                        <p class="text-slate-400 text-sm">${this.currentLang === 'ar' ? 'متخصص في تطوير تطبيقات الويب الحديثة' : 'Specialized in Modern Web Applications'}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-slate-700 bg-opacity-50 rounded-lg p-4">
+                            <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <i class="fas fa-tag text-green-400"></i>
+                                ${this.t('version')}
+                            </h3>
+                            <p class="text-slate-300">v1.0.0</p>
+                        </div>
+                        <div class="bg-slate-700 bg-opacity-50 rounded-lg p-4">
+                            <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <i class="fas fa-globe text-blue-400"></i>
+                                ${this.currentLang === 'ar' ? 'المعرض' : 'Portfolio'}
+                            </h3>
+                            <a href="https://my-frontend-portfolio-sage.vercel.app/" target="_blank" class="text-blue-300 hover:text-blue-200 transition-colors text-sm">
+                                ${this.currentLang === 'ar' ? 'عرض الأعمال' : 'View Portfolio'}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-600 pt-6">
+                        <h3 class="text-lg font-semibold mb-4 text-center">${this.t('contact')}</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                            <a href="https://www.linkedin.com/in/mohammed-samier-mouawad/" target="_blank" class="flex flex-col items-center gap-2 p-3 bg-slate-700 bg-opacity-50 rounded-lg hover:bg-opacity-70 transition-all duration-200 group">
+                                <i class="fab fa-linkedin text-2xl text-blue-400 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-xs text-slate-300">LinkedIn</span>
+                            </a>
+                            <a href="https://github.com/mohamed-samir-dev" target="_blank" class="flex flex-col items-center gap-2 p-3 bg-slate-700 bg-opacity-50 rounded-lg hover:bg-opacity-70 transition-all duration-200 group">
+                                <i class="fab fa-github text-2xl text-gray-300 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-xs text-slate-300">GitHub</span>
+                            </a>
+                            <a href="https://wa.me/201012486445" target="_blank" class="flex flex-col items-center gap-2 p-3 bg-slate-700 bg-opacity-50 rounded-lg hover:bg-opacity-70 transition-all duration-200 group">
+                                <i class="fab fa-whatsapp text-2xl text-green-400 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-xs text-slate-300">WhatsApp</span>
+                            </a>
+                            <a href="mailto:mohammedsamiermouawad@gmail.com" class="flex flex-col items-center gap-2 p-3 bg-slate-700 bg-opacity-50 rounded-lg hover:bg-opacity-70 transition-all duration-200 group">
+                                <i class="fas fa-envelope text-2xl text-red-400 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-xs text-slate-300">Email</span>
+                            </a>
+                            <a href="https://my-frontend-portfolio-sage.vercel.app/" target="_blank" class="flex flex-col items-center gap-2 p-3 bg-slate-700 bg-opacity-50 rounded-lg hover:bg-opacity-70 transition-all duration-200 group">
+                                <i class="fas fa-briefcase text-2xl text-purple-400 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-xs text-slate-300">${this.currentLang === 'ar' ? 'معرض' : 'Portfolio'}</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
     async addWord(english, arabic) {

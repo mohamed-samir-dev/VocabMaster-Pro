@@ -600,10 +600,10 @@ class VocabMasterApp {
     }
     
     calculateMasteryLevel() {
-        const accuracy = this.stats.accuracy || 0;
-        if (accuracy >= 90) return 'Expert';
-        if (accuracy >= 75) return 'Advanced';
-        if (accuracy >= 60) return 'Intermediate';
+        const wordCount = this.stats.totalWords || 0;
+        if (wordCount >= 1000) return 'Expert';
+        if (wordCount >= 500) return 'Advanced';
+        if (wordCount >= 100) return 'Intermediate';
         return 'Beginner';
     }
     

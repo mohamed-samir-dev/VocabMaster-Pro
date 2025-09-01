@@ -151,7 +151,12 @@ class VocabMasterApp {
                 techStack: 'Technology Stack',
                 developer: 'Developer',
                 version: 'Version',
-                contact: 'Contact'
+                contact: 'Contact',
+                letterStats: 'Letter Statistics',
+                wordsStartingWith: 'Words starting with',
+                letterView: 'Letter View',
+                backToVocabulary: 'Back to Vocabulary',
+                noWordsForLetter: 'No words starting with this letter'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -238,9 +243,15 @@ class VocabMasterApp {
                 techStack: 'التقنيات المستخدمة',
                 developer: 'المطور',
                 version: 'الإصدار',
-                contact: 'التواصل'
+                contact: 'التواصل',
+                letterStats: 'إحصائيات الحروف',
+                wordsStartingWith: 'كلمات تبدأ بـ',
+                letterView: 'عرض الحرف',
+                backToVocabulary: 'العودة للمفردات',
+                noWordsForLetter: 'لا توجد كلمات تبدأ بهذا الحرف'
             }
         };
+        this.letterCounts = {};
         this.init();
     }
 
@@ -249,6 +260,7 @@ class VocabMasterApp {
         this.setupEventListeners();
         this.showLoading();
         await this.loadData();
+        this.updateLetterStats();
         this.renderCurrentPage();
         this.hideLoading();
         this.checkFirstVisit();
@@ -441,6 +453,7 @@ class VocabMasterApp {
 
             // Calculate stats
             this.calculateStats();
+            this.calculateLetterStats();
         } catch (error) {
             console.error('Error loading data:', error);
             this.showToast('Unable to load vocabulary data. Please check your connection.', 'error');
@@ -597,6 +610,54 @@ class VocabMasterApp {
         return Math.round((testedWords / this.words.length) * 100);
     }
     
+    calculateLetterStats() {
+        this.letterCounts = {};
+        
+        // Initialize all letters A-Z with count 0
+        for (let i = 65; i <= 90; i++) {
+            const letter = String.fromCharCode(i);
+            this.letterCounts[letter] = 0;
+        }
+        
+        // Count words starting with each letter
+        this.words.forEach(word => {
+            if (word.english && word.english.length > 0) {
+                const firstLetter = word.english.charAt(0).toUpperCase();
+                if (firstLetter >= 'A' && firstLetter <= 'Z') {
+                    this.letterCounts[firstLetter]++;
+                }
+            }
+        });
+    }
+    
+    updateLetterStats() {
+        const letterStatsContainer = document.getElementById('letterStats');
+        if (!letterStatsContainer) return;
+        
+        const gridContainer = letterStatsContainer.querySelector('.grid');
+        if (!gridContainer) return;
+        
+        let statsHTML = '';
+        
+        // Generate stats for A-Z
+        for (let i = 65; i <= 90; i++) {
+            const letter = String.fromCharCode(i);
+            const count = this.letterCounts[letter] || 0;
+            const hasWords = count > 0;
+            
+            statsHTML += `
+                <div class="letter-stat-item flex items-center justify-between px-2 py-1 rounded cursor-pointer ${
+                    hasWords ? 'bg-blue-50 text-blue-700 hover:bg-blue-100' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
+                }" title="${this.t('wordsStartingWith')} ${letter}: ${count} ${count === 1 ? this.t('word') : this.t('words')}" onclick="app.showLetterView('${letter}')">
+                    <span class="font-medium">${letter}</span>
+                    <span class="text-xs font-bold ${hasWords ? 'text-blue-600' : 'text-slate-400'}">${count}</span>
+                </div>
+            `;
+        }
+        
+        gridContainer.innerHTML = statsHTML;
+    }
+    
     getWordOfTheDay() {
         if (this.words.length === 0) {
             return { english: 'Welcome', arabic: 'أهلاً وسهلاً' };
@@ -674,6 +735,7 @@ class VocabMasterApp {
         }
         
         this.updateNavigation();
+        this.updateLetterStats();
         this.updateWelcomeModalLanguage();
         this.updateDeveloperNoticeLanguage();
         this.navigateTo(this.currentPage);
@@ -687,6 +749,8 @@ class VocabMasterApp {
         document.querySelector('.page-title').textContent = this.getPageTitle(this.currentPage);
         document.getElementById('searchBtnText').textContent = this.t('search');
         document.getElementById('appTitle').textContent = this.t('appTitle');
+        const statsTitle = document.getElementById('statsTitle');
+        if (statsTitle) statsTitle.textContent = this.t('letterStats');
     }
 
     renderCurrentPage() {
@@ -710,6 +774,9 @@ class VocabMasterApp {
                 break;
             case 'about':
                 pageContent.innerHTML = this.renderAbout();
+                break;
+            case 'letter-view':
+                pageContent.innerHTML = this.renderLetterView();
                 break;
             default:
                 pageContent.innerHTML = this.renderDashboard();
@@ -1334,6 +1401,8 @@ class VocabMasterApp {
             
             this.words.push({ id: docRef.id, english, arabic });
             this.calculateStats();
+            this.calculateLetterStats();
+            this.updateLetterStats();
             this.renderCurrentPage();
             this.showToast('Vocabulary word added successfully to your collection.', 'success');
         } catch (error) {
@@ -1346,6 +1415,8 @@ class VocabMasterApp {
             await firebase.deleteDoc(firebase.doc(firebase.db, 'words', wordId));
             this.words = this.words.filter(word => word.id !== wordId);
             this.calculateStats();
+            this.calculateLetterStats();
+            this.updateLetterStats();
             this.renderCurrentPage();
             this.showToast('Vocabulary word removed successfully.', 'success');
         } catch (error) {

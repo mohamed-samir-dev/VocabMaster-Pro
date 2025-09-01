@@ -156,7 +156,18 @@ class VocabMasterApp {
                 wordsStartingWith: 'Words starting with',
                 letterView: 'Letter View',
                 backToVocabulary: 'Back to Vocabulary',
-                noWordsForLetter: 'No words starting with this letter'
+                noWordsForLetter: 'No words starting with this letter',
+                questionCount: 'Number of Questions',
+                reviewWrongAnswers: 'Review Wrong Answers',
+                wrongAnswers: 'Wrong Answers',
+                correctAnswer: 'Correct Answer',
+                yourAnswer: 'Your Answer',
+                testSettings: 'Test Settings',
+                allWords: 'All Words',
+                questions: 'Questions',
+                skipped: 'Skipped',
+                question: 'Question',
+                maxQuestions: 'Max Questions'
             },
             ar: {
                 dashboard: 'لوحة التحكم',
@@ -248,7 +259,18 @@ class VocabMasterApp {
                 wordsStartingWith: 'كلمات تبدأ بـ',
                 letterView: 'عرض الحرف',
                 backToVocabulary: 'العودة للمفردات',
-                noWordsForLetter: 'لا توجد كلمات تبدأ بهذا الحرف'
+                noWordsForLetter: 'لا توجد كلمات تبدأ بهذا الحرف',
+                questionCount: 'عدد الأسئلة',
+                reviewWrongAnswers: 'مراجعة الإجابات الخاطئة',
+                wrongAnswers: 'الإجابات الخاطئة',
+                correctAnswer: 'الإجابة الصحيحة',
+                yourAnswer: 'إجابتك',
+                testSettings: 'إعدادات الاختبار',
+                allWords: 'جميع الكلمات',
+                questions: 'أسئلة',
+                skipped: 'تم تخطيها',
+                question: 'السؤال',
+                maxQuestions: 'الحد الأقصى للأسئلة'
             }
         };
         this.letterCounts = {};
@@ -1125,14 +1147,41 @@ class VocabMasterApp {
             const wordCount = this.words.length;
             const wordText = wordCount === 1 ? this.t('word') : this.t('words');
             return `
-                <div class="max-w-2xl mx-auto">
-                    <div class="bg-white rounded-lg p-8 border border-slate-200 shadow-sm text-center">
-                        <h2 class="text-2xl font-semibold text-slate-800 mb-4">${this.t('assessmentReady')}</h2>
-                        <p class="text-slate-600 mb-6">${this.t('evaluateMastery')} ${wordCount} ${wordText}</p>
-                        <button class="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-lg text-base font-medium hover:bg-blue-700 transition-all duration-200" onclick="app.startTest()">
-                            <i class="fas fa-play"></i>
-                            ${this.t('startTest')}
-                        </button>
+                <div class="max-w-3xl mx-auto">
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-8 border border-blue-200 shadow-lg mb-6">
+                        <div class="text-center mb-8">
+                            <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-brain text-2xl text-white"></i>
+                            </div>
+                            <h2 class="text-3xl font-bold text-slate-800 mb-2">${this.t('assessmentReady')}</h2>
+                            <p class="text-slate-600">${this.t('evaluateMastery')} ${wordCount} ${wordText}</p>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                                <i class="fas fa-cog text-blue-600"></i>
+                                ${this.t('testSettings')}
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">${this.t('questionCount')}</label>
+                                    <div class="flex gap-3">
+                                        <input type="number" id="questionCount" min="1" max="${wordCount}" value="10" class="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-center font-semibold">
+                                        <button type="button" onclick="document.getElementById('questionCount').value = ${wordCount}" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium">
+                                            ${this.t('allWords')}
+                                        </button>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-1">${this.t('maxQuestions')}: ${wordCount}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg text-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg" onclick="app.startTest()">
+                                <i class="fas fa-play"></i>
+                                ${this.t('startTest')}
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -1461,13 +1510,18 @@ class VocabMasterApp {
             return;
         }
         
-        const shuffled = [...this.words].sort(() => Math.random() - 0.5);
+        const questionCountEl = document.getElementById('questionCount');
+        const questionCount = questionCountEl ? parseInt(questionCountEl.value) : 10;
+        const maxQuestions = Math.min(Math.max(1, questionCount), this.words.length);
+        
+        const shuffled = [...this.words].sort(() => Math.random() - 0.5).slice(0, maxQuestions);
         const questions = shuffled.map(word => {
             const isEnglishToArabic = Math.random() > 0.5;
             return {
                 question: isEnglishToArabic ? word.english : word.arabic,
                 answer: isEnglishToArabic ? word.arabic : word.english,
-                word
+                word,
+                isEnglishToArabic
             };
         });
         
@@ -1475,7 +1529,8 @@ class VocabMasterApp {
             questions,
             currentIndex: 0,
             answers: [],
-            startTime: new Date()
+            startTime: new Date(),
+            wrongAnswers: []
         };
         
         this.renderCurrentPage();
@@ -1493,11 +1548,30 @@ class VocabMasterApp {
         const isCorrect = normalizedUser === normalizedCorrect;
         
         this.currentTest.answers.push({ userAnswer, correct: isCorrect });
+        
+        if (!isCorrect) {
+            this.currentTest.wrongAnswers.push({
+                question: question.question,
+                correctAnswer: question.answer,
+                userAnswer: userAnswer || this.t('skipped'),
+                word: question.word
+            });
+        }
+        
         this.nextQuestion();
     }
 
     skipQuestion() {
+        const question = this.currentTest.questions[this.currentTest.currentIndex];
         this.currentTest.answers.push({ userAnswer: '', correct: false });
+        
+        this.currentTest.wrongAnswers.push({
+            question: question.question,
+            correctAnswer: question.answer,
+            userAnswer: this.t('skipped'),
+            word: question.word
+        });
+        
         this.nextQuestion();
     }
 
@@ -1553,6 +1627,7 @@ class VocabMasterApp {
         const minutes = Math.floor(timeSpent / 60);
         const seconds = timeSpent % 60;
         const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        const wrongCount = this.currentTest.wrongAnswers.length;
         
         let performanceKey, performanceColor, performanceIcon;
         if (percentage >= 90) {
@@ -1575,47 +1650,98 @@ class VocabMasterApp {
         
         const pageContent = document.getElementById('pageContent');
         pageContent.innerHTML = `
-            <div class="max-w-2xl mx-auto">
-                <div class="bg-white rounded-xl shadow-lg border border-slate-200 p-8 text-center">
-                    <div class="w-20 h-20 mx-auto mb-6 ${performanceColor} rounded-full flex items-center justify-center">
-                        <i class="fas ${performanceIcon} text-3xl"></i>
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl shadow-xl border border-slate-200 p-8 mb-6">
+                    <div class="text-center mb-8">
+                        <div class="w-24 h-24 mx-auto mb-6 ${performanceColor} rounded-full flex items-center justify-center shadow-lg">
+                            <i class="fas ${performanceIcon} text-4xl"></i>
+                        </div>
+                        <h2 class="text-4xl font-bold text-slate-800 mb-3">${this.t('testComplete')}</h2>
+                        <p class="text-xl ${performanceColor.split(' ')[0]} font-semibold">${this.t(performanceKey)}</p>
                     </div>
                     
-                    <h2 class="text-3xl font-bold text-slate-800 mb-2">${this.t('testComplete')}</h2>
-                    <p class="text-lg ${performanceColor.split(' ')[0]} font-semibold mb-8">${this.t(performanceKey)}</p>
-                    
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-slate-800 mb-1">${percentage}%</div>
+                    <div class="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+                        <div class="bg-white rounded-lg p-4 text-center shadow-sm">
+                            <div class="text-3xl font-bold text-blue-600 mb-2">${percentage}%</div>
                             <div class="text-sm text-slate-600">${this.t('yourScore')}</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-green-600 mb-1">${correct}</div>
+                        <div class="bg-white rounded-lg p-4 text-center shadow-sm">
+                            <div class="text-3xl font-bold text-green-600 mb-2">${correct}</div>
                             <div class="text-sm text-slate-600">${this.t('correctAnswers')}</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-slate-800 mb-1">${total}</div>
+                        <div class="bg-white rounded-lg p-4 text-center shadow-sm">
+                            <div class="text-3xl font-bold text-red-600 mb-2">${wrongCount}</div>
+                            <div class="text-sm text-slate-600">${this.t('wrongAnswers')}</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 text-center shadow-sm">
+                            <div class="text-3xl font-bold text-slate-800 mb-2">${total}</div>
                             <div class="text-sm text-slate-600">${this.t('totalQuestions')}</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-blue-600 mb-1">${timeString}</div>
+                        <div class="bg-white rounded-lg p-4 text-center shadow-sm">
+                            <div class="text-3xl font-bold text-purple-600 mb-2">${timeString}</div>
                             <div class="text-sm text-slate-600">${this.t('timeSpent')}</div>
                         </div>
                     </div>
                     
-                    <div class="flex gap-4 justify-center">
-                        <button onclick="app.startTest()" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <button onclick="app.navigateTo('test')" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg">
                             <i class="fas fa-redo mr-2"></i>
                             ${this.t('retakeTest')}
                         </button>
+                        ${wrongCount > 0 ? `
+                            <button onclick="app.showWrongAnswersReview()" class="px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg hover:from-red-700 hover:to-pink-700 transition-all duration-200 font-medium shadow-lg">
+                                <i class="fas fa-eye mr-2"></i>
+                                ${this.t('reviewWrongAnswers')}
+                            </button>
+                        ` : ''}
                         <button onclick="app.navigateTo('dashboard')" class="px-6 py-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-medium">
                             <i class="fas fa-home mr-2"></i>
                             ${this.t('backToDashboard')}
                         </button>
                     </div>
                 </div>
+                
+                ${wrongCount > 0 ? `
+                    <div class="bg-white rounded-xl shadow-lg border border-red-200 p-6" id="wrongAnswersSection" style="display: none;">
+                        <h3 class="text-2xl font-bold text-red-600 mb-6 flex items-center gap-3">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            ${this.t('wrongAnswers')} (${wrongCount})
+                        </h3>
+                        <div class="space-y-4">
+                            ${this.currentTest.wrongAnswers.map((item, index) => `
+                                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <span class="text-sm font-medium text-red-600">#${index + 1}</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-600 mb-1">${this.t('question')}</p>
+                                            <p class="text-lg font-semibold text-slate-800">${item.question}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-green-600 mb-1">${this.t('correctAnswer')}</p>
+                                            <p class="text-lg font-semibold text-green-700">${item.correctAnswer}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-red-600 mb-1">${this.t('yourAnswer')}</p>
+                                            <p class="text-lg font-semibold text-red-700">${item.userAnswer}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
             </div>
         `;
+    }
+    
+    showWrongAnswersReview() {
+        const section = document.getElementById('wrongAnswersSection');
+        if (section) {
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
     }
 }
 
